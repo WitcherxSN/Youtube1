@@ -5,6 +5,7 @@ import FilterBar from "./components/FilterBar";
 import VideoCard from "./components/VideoCard";
 import { videos } from "./data/videos";
 import { Routes, Route } from "react-router-dom";
+import VideoPlayer from "./pages/VideoPlayer";
 
 function App() {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -59,6 +60,7 @@ function handleSearch() {
                 {filteredVideos.map((video) => (
                   <VideoCard
                     key={video.id}
+                    id={video.id}
                     thumbnail={video.thumbnail}
                     title={video.title}
                     channel={video.channel}
@@ -78,13 +80,9 @@ function handleSearch() {
     />
 
     <Route
-      path="/video/:id"
-      element={
-        <h1 className="text-3xl font-bold p-10">
-          Video Player Page
-        </h1>
-      }
-    />
+  path="/video/:id"
+  element={<VideoPlayer />}
+/>
 
   </Routes>
   );
