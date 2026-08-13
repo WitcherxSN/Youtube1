@@ -1,4 +1,4 @@
-function FilterBar() {
+function FilterBar({ selectedCategory, setSelectedCategory }) {
   const filters = [
     "All",
     "Music",
@@ -12,13 +12,12 @@ function FilterBar() {
 
   return (
     <div className="flex gap-3 overflow-x-auto px-4 py-3 bg-white">
-
-      {filters.map((filter, index) => (
+      {filters.map((filter) => (
         <button
           key={filter}
-          className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm font-medium
-          ${
-            index === 0
+          onClick={() => setSelectedCategory(filter)}
+          className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm font-medium ${
+            selectedCategory === filter
               ? "bg-black text-white"
               : "bg-gray-100 hover:bg-gray-200 text-black"
           }`}
@@ -26,7 +25,6 @@ function FilterBar() {
           {filter}
         </button>
       ))}
-
     </div>
   );
 }
