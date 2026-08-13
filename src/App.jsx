@@ -8,19 +8,34 @@ import { videos } from "./data/videos";
 function App() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchInput, setSearchInput] = useState("");
+  const [searchText, setSearchText] = useState("");
 
-  const filteredVideos =
-    selectedCategory === "All"
-      ? videos
-      : videos.filter(
-          (video) => video.category === selectedCategory
-        );
+  const filteredVideos = videos.filter((video) => {
+  const matchesCategory =
+    selectedCategory === "All" ||
+    video.category === selectedCategory;
+
+  const matchesSearch =
+    video.title
+      .toLowerCase()
+      .includes(searchText.toLowerCase());
+
+  return matchesCategory && matchesSearch;
+});
+
+function handleSearch() {
+  setSearchText(searchInput);
+}
 
   return (
     <>
-      <Header
-        toggleSidebar={() => setShowSidebar(!showSidebar)}
-      />
+     <Header
+  toggleSidebar={() => setShowSidebar(!showSidebar)}
+  searchInput={searchInput}
+  setSearchInput={setSearchInput}
+  handleSearch={handleSearch}
+/>
 
       <div className="flex">
 
