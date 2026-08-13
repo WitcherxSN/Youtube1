@@ -14,6 +14,10 @@ function VideoPlayer() {
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [disliked, setDisliked] = useState(false);
+  const [likeCount, setLikeCount] = useState(1200);
+  const [subscribed, setSubscribed] = useState(false);
 
   const video = videos.find(
     (video) => video.id === Number(id)
@@ -29,6 +33,33 @@ function VideoPlayer() {
     clickPosition * videoRef.current.duration;
 
   videoRef.current.currentTime = newTime;
+}
+
+function handleLike() {
+  if (liked) {
+    setLiked(false);
+    setLikeCount(likeCount - 1);
+  } else {
+    setLiked(true);
+    setLikeCount(likeCount + 1);
+
+    if (disliked) {
+      setDisliked(false);
+    }
+  }
+}
+
+function handleDislike() {
+  if (disliked) {
+    setDisliked(false);
+  } else {
+    setDisliked(true);
+
+    if (liked) {
+      setLiked(false);
+      setLikeCount(likeCount - 1);
+    }
+  }
 }
 
 function handleFullscreen() {
@@ -217,9 +248,16 @@ onClick={handleProgressClick}
       </p>
     </div>
 
-    <button className="ml-3 bg-black text-white px-4 py-2 rounded-full font-medium">
-      Subscribe
-    </button>
+    <button
+  onClick={() => setSubscribed(!subscribed)}
+  className={`ml-2 px-4 py-2 rounded-full font-medium ${
+    subscribed
+      ? "bg-gray-200 text-black"
+      : "bg-black text-white"
+  }`}
+>
+  {subscribed ? "Subscribed" : "Subscribe"}
+</button>
 
   </div>
 
@@ -229,27 +267,41 @@ onClick={handleProgressClick}
   {/* Like / Dislike */}
   <div className="flex items-center bg-gray-100 rounded-full">
 
-    <button className="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 rounded-l-full">
-      <img
-        src="https://cdn-icons-png.flaticon.com/128/3405/3405355.png"
-        alt="Like"
-        className="w-5 h-5 object-contain"
-      />
+    <button
+  onClick={handleLike}
+  className={`flex items-center gap-2 px-4 py-2 rounded-l-full ${
+    liked
+      ? "bg-gray-300"
+      : "hover:bg-gray-200"
+  }`}
+>
+  <img
+    src="https://cdn-icons-png.flaticon.com/128/3405/3405355.png"
+    alt="Like"
+    className="w-5 h-5 object-contain"
+  />
 
-      <span className="font-medium">
-        1.2K
-      </span>
-    </button>
+  <span className="font-medium">
+    {likeCount}
+  </span>
+</button>
 
     <div className="h-6 w-px bg-gray-300"></div>
 
-    <button className="flex items-center px-4 py-2 hover:bg-gray-200 rounded-r-full">
-      <img
-        src="https://cdn-icons-png.flaticon.com/128/4466/4466315.png"
-        alt="Dislike"
-        className="w-5 h-5 object-contain"
-      />
-    </button>
+    <button
+  onClick={handleDislike}
+  className={`flex items-center px-4 py-2 rounded-r-full ${
+    disliked
+      ? "bg-gray-300"
+      : "hover:bg-gray-200"
+  }`}
+>
+  <img
+    src="https://cdn-icons-png.flaticon.com/128/4466/4466315.png"
+    alt="Dislike"
+    className="w-5 h-5 object-contain"
+  />
+</button>
 
   </div>
 
