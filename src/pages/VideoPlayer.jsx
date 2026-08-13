@@ -12,6 +12,8 @@ function VideoPlayer() {
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
 
   const video = videos.find(
     (video) => video.id === Number(id)
@@ -27,6 +29,39 @@ function VideoPlayer() {
     clickPosition * videoRef.current.duration;
 
   videoRef.current.currentTime = newTime;
+}
+
+function handleFullscreen() {
+  const player = videoRef.current.parentElement;
+
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    player.requestFullscreen();
+  }
+}
+
+function handleVolumeChange(e) {
+  const newVolume = Number(e.target.value);
+
+  setVolume(newVolume);
+  videoRef.current.volume = newVolume;
+
+  if (newVolume === 0) {
+    setIsMuted(true);
+  } else {
+    setIsMuted(false);
+  }
+}
+
+function toggleMute() {
+  if (isMuted) {
+    videoRef.current.muted = false;
+    setIsMuted(false);
+  } else {
+    videoRef.current.muted = true;
+    setIsMuted(true);
+  }
 }
 
   function handleTimeUpdate() {
@@ -102,6 +137,10 @@ onClick={handleProgressClick}
   </div>
 
   {/* Bottom Controls */}
+  {/* Bottom Controls */}
+<div className="flex items-center justify-between">
+
+  {/* Left Controls */}
   <div className="flex items-center gap-4">
 
     <button
@@ -111,11 +150,39 @@ onClick={handleProgressClick}
       {isPlaying ? "❚❚" : "▶"}
     </button>
 
+    <button
+      onClick={toggleMute}
+      className="text-white text-xl"
+    >
+      {isMuted ? "🔇" : "🔊"}
+    </button>
+
+    <input
+      type="range"
+      min="0"
+      max="1"
+      step="0.1"
+      value={volume}
+      onChange={handleVolumeChange}
+      className="w-24 cursor-pointer"
+    />
+
     <span className="text-white text-sm">
       {formatTime(currentTime)} / {formatTime(duration)}
     </span>
 
   </div>
+
+  {/* Right Control */}
+  <button
+    onClick={handleFullscreen}
+    className="text-white text-2xl"
+  >
+    ⛶
+  </button>
+
+</div>
+  
 
           </div>
 
