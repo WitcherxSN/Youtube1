@@ -17,6 +17,18 @@ function VideoPlayer() {
     (video) => video.id === Number(id)
   );
 
+  function handleProgressClick(e) {
+  const progressBar = e.currentTarget;
+
+  const clickPosition =
+    e.nativeEvent.offsetX / progressBar.clientWidth;
+
+  const newTime =
+    clickPosition * videoRef.current.duration;
+
+  videoRef.current.currentTime = newTime;
+}
+
   function handleTimeUpdate() {
   const current = videoRef.current.currentTime;
   const total = videoRef.current.duration;
@@ -78,7 +90,9 @@ function formatTime(time) {
           <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 pt-10 bg-gradient-to-t from-black/80 to-transparent">
 
              {/* Progress Bar */}
-  <div className="w-full h-1 bg-gray-500 cursor-pointer mb-3">
+  <div
+onClick={handleProgressClick}
+  className="w-full h-1 bg-gray-500 cursor-pointer mb-3">
 
     <div
       className="h-full bg-red-600"
