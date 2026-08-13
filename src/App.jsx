@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import FilterBar from "./components/FilterBar";
 import VideoCard from "./components/VideoCard";
 import { videos } from "./data/videos";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -29,45 +30,63 @@ function handleSearch() {
 }
 
   return (
-    <>
-     <Header
-  toggleSidebar={() => setShowSidebar(!showSidebar)}
-  searchInput={searchInput}
-  setSearchInput={setSearchInput}
-  handleSearch={handleSearch}
-/>
+     <Routes>
 
-      <div className="flex">
-
-        {showSidebar && <Sidebar />}
-
-        <main className="flex-1">
-
-          <FilterBar
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
+    <Route
+      path="/"
+      element={
+        <>
+          <Header
+            toggleSidebar={() => setShowSidebar(!showSidebar)}
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
+            handleSearch={handleSearch}
           />
 
-          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8">
+          <div className="flex">
 
-            {filteredVideos.map((video) => (
-              <VideoCard
-                key={video.id}
-                thumbnail={video.thumbnail}
-                title={video.title}
-                channel={video.channel}
-                views={video.views}
-                uploadedAt={video.uploadedAt}
-                channelImage={video.channelImage}
+            {showSidebar && <Sidebar />}
+
+            <main className="flex-1">
+
+              <FilterBar
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
               />
-            ))}
+
+              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8">
+
+                {filteredVideos.map((video) => (
+                  <VideoCard
+                    key={video.id}
+                    thumbnail={video.thumbnail}
+                    title={video.title}
+                    channel={video.channel}
+                    views={video.views}
+                    uploadedAt={video.uploadedAt}
+                    channelImage={video.channelImage}
+                  />
+                ))}
+
+              </div>
+
+            </main>
 
           </div>
+        </>
+      }
+    />
 
-        </main>
+    <Route
+      path="/video/:id"
+      element={
+        <h1 className="text-3xl font-bold p-10">
+          Video Player Page
+        </h1>
+      }
+    />
 
-      </div>
-    </>
+  </Routes>
   );
 }
 
