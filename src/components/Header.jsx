@@ -1,11 +1,14 @@
-function Header() {
+function Header({ toggleSidebar }) {
   return (
     <header className="flex items-center justify-between px-4 py-2 sticky top-0 bg-white z-50">
       
       <div className="flex items-center gap-4">
-        <button className="text-2xl">
-          ☰
-        </button>
+        <button
+  onClick={toggleSidebar}
+  className="text-2xl"
+>
+  ☰
+</button>
 
         <h1 className="text-xl font-bold">
           <span className="text-red-600">You</span>Tube

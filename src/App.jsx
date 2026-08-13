@@ -1,17 +1,18 @@
-
-import './App.css'
-import './index.css'
-
+import { useState } from "react";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 
 function App() {
+  const [showSidebar, setShowSidebar] = useState(true);
+
   return (
     <>
-      <Header />
+      <Header
+        toggleSidebar={() => setShowSidebar(!showSidebar)}
+      />
 
       <div className="flex">
-        <Sidebar />
+        {showSidebar && <Sidebar />}
 
         <main className="flex-1 p-6">
           <h2 className="text-2xl font-semibold">
