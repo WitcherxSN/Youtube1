@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 function VideoCard({
+  id,
   thumbnail,
   title,
   channel,
@@ -6,8 +9,17 @@ function VideoCard({
   uploadedAt,
   channelImage,
 }) {
+  const navigate = useNavigate();
+
+  function openVideo() {
+    navigate(`/video/${id}`);
+  }
+
   return (
-    <div className="cursor-pointer">
+    <div
+      onClick={openVideo}
+      className="cursor-pointer"
+    >
 
       <img
         src={thumbnail}
@@ -17,11 +29,13 @@ function VideoCard({
 
       <div className="flex gap-3 mt-3">
 
-        <img
-          src={channelImage}
-          alt={channel}
-          className="w-9 h-9 rounded-full object-cover shrink-0"
-        />
+        {channelImage && (
+          <img
+            src={channelImage}
+            alt={channel}
+            className="w-9 h-9 rounded-full object-cover shrink-0"
+          />
+        )}
 
         <div>
           <h3 className="font-semibold text-base leading-5">
