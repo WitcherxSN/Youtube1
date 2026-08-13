@@ -18,6 +18,20 @@ function VideoPlayer() {
   const [disliked, setDisliked] = useState(false);
   const [likeCount, setLikeCount] = useState(1200);
   const [subscribed, setSubscribed] = useState(false);
+  const [commentText, setCommentText] = useState("");
+
+const [comments, setComments] = useState([
+  {
+    id: 1,
+    user: "Shravan",
+    text: "Great video! Very helpful.",
+  },
+  {
+    id: 2,
+    user: "Rahul",
+    text: "This explanation was really clear.",
+  },
+]);
 
   const video = videos.find(
     (video) => video.id === Number(id)
@@ -225,7 +239,7 @@ onClick={handleProgressClick}
         </h1>
 
         {/* Channel Information */}
-        <div className="flex items-center justify-between mt-4 gap-4 flex-wrap">
+<div className="flex items-center justify-between mt-4 gap-4 flex-wrap">
 
   {/* Channel Side */}
   <div className="flex items-center gap-3">
@@ -255,14 +269,14 @@ onClick={handleProgressClick}
       ? "bg-gray-200 text-black"
       : "bg-black text-white"
   }`}
->
+ >
   {subscribed ? "Subscribed" : "Subscribe"}
-</button>
+ </button>
 
   </div>
 
   {/* Right Side - Actions */}
-<div className="flex items-center gap-2 flex-wrap">
+ <div className="flex items-center gap-2 flex-wrap">
 
   {/* Like / Dislike */}
   <div className="flex items-center bg-gray-100 rounded-full">
@@ -274,7 +288,7 @@ onClick={handleProgressClick}
       ? "bg-gray-300"
       : "hover:bg-gray-200"
   }`}
->
+ >
   <img
     src="https://cdn-icons-png.flaticon.com/128/3405/3405355.png"
     alt="Like"
@@ -284,7 +298,7 @@ onClick={handleProgressClick}
   <span className="font-medium">
     {likeCount}
   </span>
-</button>
+ </button>
 
     <div className="h-6 w-px bg-gray-300"></div>
 
@@ -295,13 +309,13 @@ onClick={handleProgressClick}
       ? "bg-gray-300"
       : "hover:bg-gray-200"
   }`}
->
+ >
   <img
     src="https://cdn-icons-png.flaticon.com/128/4466/4466315.png"
     alt="Dislike"
     className="w-5 h-5 object-contain"
   />
-</button>
+ </button>
 
   </div>
 
@@ -359,11 +373,154 @@ onClick={handleProgressClick}
 
   </button>
 
-</div>
+ </div>
 
-</div>
+ </div>
 
       </div>
+      {/* Description Box */}
+<div className="mt-4 bg-gray-100 rounded-xl p-4">
+
+  <p className="font-semibold text-sm">
+    {video.views} views • {video.uploadedAt}
+  </p>
+
+  <p className="mt-2 text-sm leading-5">
+    {video.description}
+  </p>
+
+</div>
+
+  {/* Comments Section */}
+<div className="mt-8">
+
+  <h2 className="text-xl font-semibold mb-5">
+    {comments.length} Comments
+  </h2>
+
+  {/* Add Comment */}
+  <div className="flex gap-3 mb-6">
+
+    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center font-semibold">
+      S
+    </div>
+
+    <div className="flex-1">
+
+      <input
+        type="text"
+        placeholder="Add a comment..."
+        value={commentText}
+        onChange={(e) => setCommentText(e.target.value)}
+        className="w-full border-b border-gray-300 py-2 outline-none focus:border-black"
+      />
+
+      <div className="flex justify-end gap-3 mt-3">
+
+        <button
+          onClick={() => setCommentText("")}
+          className="px-4 py-2 rounded-full hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+        <button
+          className="px-4 py-2 rounded-full bg-blue-600 text-white font-medium"
+        >
+          Comment
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+ {/* Existing Comments */}
+<div className="space-y-7">
+
+  {comments.map((comment) => (
+    <div
+      key={comment.id}
+      className="flex gap-3"
+    >
+
+      {/* User Avatar */}
+      <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center font-semibold shrink-0">
+        {comment.user.charAt(0)}
+      </div>
+
+      {/* Comment Content */}
+      <div className="flex-1">
+
+        {/* Username */}
+        <p className="text-sm font-semibold">
+          @{comment.user}
+          <span className="ml-2 text-xs text-gray-500 font-normal">
+            2 days ago
+          </span>
+        </p>
+
+        {/* Comment Text */}
+        <p className="text-sm mt-1">
+          {comment.text}
+        </p>
+
+
+        {/* Comment Actions */}
+        <div className="flex items-center gap-2 mt-2">
+
+          {/* Like */}
+          <button
+            className="flex items-center gap-1 px-2 py-2 rounded-full hover:bg-gray-100"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/128/3405/3405355.png"
+              alt="Like comment"
+              className="w-4 h-4 object-contain"
+            />
+
+            <span className="text-xs text-gray-600">
+              12
+            </span>
+          </button>
+
+
+          {/* Dislike */}
+          <button
+            className="flex items-center px-2 py-2 rounded-full hover:bg-gray-100"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/128/4466/4466315.png"
+              alt="Dislike comment"
+              className="w-4 h-4 object-contain"
+            />
+          </button>
+
+
+          {/* Reply */}
+          <button
+            className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-gray-100 font-medium text-sm"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/128/2990/2990295.png"
+              alt="Reply"
+              className="w-4 h-4 object-contain"
+            />
+
+            Reply
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  ))}
+
+</div>
+
+</div>
 
     </div>
   );
