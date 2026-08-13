@@ -153,7 +153,7 @@ function formatTime(time) {
   return (
   <div className="p-6">
 
-    <div className="max-w-[1500px] mx-auto flex gap-6">
+    <div className="w-full mx-auto flex gap-6">
 
       {/* LEFT SIDE */}
       <div className="flex-1 min-w-0">
@@ -520,7 +520,7 @@ function formatTime(time) {
 
 
       {/* RIGHT SIDE - Recommended Videos */}
-      <div className="w-[380px] shrink-0 hidden lg:block">
+      <div className="w-[480px] shrink-0 hidden lg:block">
 
         {/* <h2 className="text-lg font-semibold mb-4">
           Up next
@@ -544,7 +544,7 @@ function formatTime(time) {
                 <img
                   src={item.thumbnail}
                   alt={item.title}
-                  className="w-70 aspect-video object-cover rounded-lg"
+                  className="w-80 aspect-video object-cover rounded-xl"
                 />
 
                 <div className="flex-1">
