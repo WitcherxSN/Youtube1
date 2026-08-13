@@ -1,11 +1,11 @@
-function VideoCard({ thumbnail, title, channel, views }) {
+function VideoCard({ thumbnail, title, channel, views, uploadedAt }) {
   return (
     <div className="cursor-pointer">
 
       <img
         src={thumbnail}
         alt={title}
-        className="w-full rounded-xl"
+        className="w-full aspect-video object-cover rounded-xl"
       />
 
       <div className="mt-3">
@@ -19,7 +19,7 @@ function VideoCard({ thumbnail, title, channel, views }) {
         </p>
 
         <p className="text-sm text-gray-600">
-          {views} views
+          {views} views • {uploadedAt}
         </p>
 
       </div>
