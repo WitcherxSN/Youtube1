@@ -9,6 +9,7 @@ export const videos = [
     thumbnail:
       "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
     channelImage: "",
+    videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
   },
 
   {
@@ -21,6 +22,7 @@ export const videos = [
     thumbnail:
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
     channelImage: "",
+    videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
   },
 
   {
@@ -33,6 +35,7 @@ export const videos = [
     thumbnail:
       "https://images.unsplash.com/photo-1550745165-9bc0b252726f",
     channelImage: "",
+    videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
   },
 
   {
@@ -45,6 +48,7 @@ export const videos = [
     thumbnail:
       "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b",
     channelImage: "",
+    videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
   },
 
   {
@@ -57,6 +61,7 @@ export const videos = [
     thumbnail:
       "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba",
     channelImage: "",
+    videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
   },
 
   {
@@ -69,6 +74,7 @@ export const videos = [
     thumbnail:
       "https://images.unsplash.com/photo-1504711434969-e33886168f5c",
     channelImage: "",
+    videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
   },
 
   {
@@ -81,6 +87,7 @@ export const videos = [
     thumbnail:
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c",
     channelImage: "",
+    videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
   },
 
   {
@@ -93,5 +100,6 @@ export const videos = [
     thumbnail:
       "https://images.unsplash.com/photo-1511512578047-dfb367046420",
     channelImage: "",
+    videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
   },
 ];
