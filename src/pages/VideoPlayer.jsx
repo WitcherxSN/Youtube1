@@ -194,17 +194,122 @@ onClick={handleProgressClick}
         </h1>
 
         {/* Channel Information */}
-        <div className="mt-3">
+        <div className="flex items-center justify-between mt-4 gap-4 flex-wrap">
 
-          <p className="font-semibold">
-            {video.channel}
-          </p>
+  {/* Channel Side */}
+  <div className="flex items-center gap-3">
 
-          <p className="text-sm text-gray-600 mt-1">
-            {video.views} views • {video.uploadedAt}
-          </p>
+    {video.channelImage && (
+      <img
+        src={video.channelImage}
+        alt={video.channel}
+        className="w-10 h-10 rounded-full object-cover"
+      />
+    )}
 
-        </div>
+    <div>
+      <p className="font-semibold">
+        {video.channel}
+      </p>
+
+      <p className="text-xs text-gray-500">
+        1.2M subscribers
+      </p>
+    </div>
+
+    <button className="ml-3 bg-black text-white px-4 py-2 rounded-full font-medium">
+      Subscribe
+    </button>
+
+  </div>
+
+  {/* Right Side - Actions */}
+<div className="flex items-center gap-2 flex-wrap">
+
+  {/* Like / Dislike */}
+  <div className="flex items-center bg-gray-100 rounded-full">
+
+    <button className="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 rounded-l-full">
+      <img
+        src="https://cdn-icons-png.flaticon.com/128/3405/3405355.png"
+        alt="Like"
+        className="w-5 h-5 object-contain"
+      />
+
+      <span className="font-medium">
+        1.2K
+      </span>
+    </button>
+
+    <div className="h-6 w-px bg-gray-300"></div>
+
+    <button className="flex items-center px-4 py-2 hover:bg-gray-200 rounded-r-full">
+      <img
+        src="https://cdn-icons-png.flaticon.com/128/4466/4466315.png"
+        alt="Dislike"
+        className="w-5 h-5 object-contain"
+      />
+    </button>
+
+  </div>
+
+
+  {/* Share */}
+  <button className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-medium">
+
+    <img
+      src="https://cdn-icons-png.flaticon.com/128/2990/2990295.png"
+      alt="Share"
+      className="w-5 h-5 object-contain"
+    />
+
+    <span>Share</span>
+
+  </button>
+
+
+  {/* Download */}
+  <button className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-medium">
+
+    <img
+      src="https://cdn-icons-png.flaticon.com/128/3502/3502477.png"
+      alt="Download"
+      className="w-5 h-5 object-contain"
+    />
+
+    <span>Download</span>
+
+  </button>
+
+
+  {/* Save */}
+  <button className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-medium">
+
+    <img
+      src="https://cdn-icons-png.flaticon.com/128/9511/9511721.png"
+      alt="Save"
+      className="w-5 h-5 object-contain"
+    />
+
+    <span>Save</span>
+
+  </button>
+
+
+  {/* Three Dot Menu */}
+  <button className="bg-gray-100 hover:bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center">
+
+    <img
+      src="https://cdn-icons-png.flaticon.com/128/2740/2740657.png"
+      alt="More options"
+      className="w-5 h-5 object-contain"
+    />
+
+  </button>
+
+</div>
+
+</div>
 
       </div>
 
