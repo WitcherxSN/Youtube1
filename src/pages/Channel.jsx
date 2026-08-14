@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { videos } from "../data/videos";
 
 function Channel() {
+    const [isOwner] = useState(true);
   const { channelName } = useParams();
 
   const [subscribed, setSubscribed] = useState(false);
@@ -29,57 +30,60 @@ function Channel() {
       {/* Banner */}
       <div className="w-full h-48 bg-gray-200 rounded-xl"></div>
 
-      {/* Channel Info */}
-      <div className="flex items-center justify-between mt-6">
+     {/* Channel Info */}
+<div className="flex items-center gap-5 mt-6">
 
-        <div className="flex items-center gap-5">
+  {/* Channel Image */}
+  {channel.channelImage ? (
+    <img
+      src={channel.channelImage}
+      alt={channel.channel}
+      className="w-24 h-24 rounded-full object-cover"
+    />
+  ) : (
+    <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center text-3xl font-bold">
+      {channel.channel.charAt(0)}
+    </div>
+  )}
 
-          {/* Channel Image */}
-          {channel.channelImage ? (
-            <img
-              src={channel.channelImage}
-              alt={channel.channel}
-              className="w-24 h-24 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center text-3xl font-bold">
-              {channel.channel.charAt(0)}
-            </div>
-          )}
+  {/* Channel Details */}
+  <div>
 
-          <div>
+    <h1 className="text-3xl font-bold">
+      {channel.channel}
+    </h1>
 
-            <h1 className="text-3xl font-bold">
-              {channel.channel}
-            </h1>
+    <p className="text-sm text-gray-600 mt-1">
+      @{channel.channel.replaceAll(" ", "").toLowerCase()}
+      {" "}• 1.2M subscribers
+      {" "}• {channelVideos.length} videos
+    </p>
 
-            <p className="text-sm text-gray-600 mt-1">
-              @{channel.channel.replaceAll(" ", "").toLowerCase()}
-              {" "}• 1.2M subscribers
-              {" "}• {channelVideos.length} videos
-            </p>
+    <p className="text-sm text-gray-600 mt-2">
+      Welcome to {channel.channel}
+    </p>
 
-            <p className="text-sm text-gray-600 mt-2">
-              Welcome to {channel.channel}
-            </p>
+    {/* Subscribe + More */}
+    <div className="flex items-center gap-2 mt-4">
 
-          </div>
+      <button
+        onClick={() => setSubscribed(!subscribed)}
+        className={`px-5 py-2 rounded-full font-medium ${
+          subscribed
+            ? "bg-gray-200 text-black"
+            : "bg-black text-white"
+        }`}
+      >
+        {subscribed ? "Subscribed" : "Subscribe"}
+      </button>
 
-        </div>
+     
 
-        {/* Subscribe Button */}
-        <button
-          onClick={() => setSubscribed(!subscribed)}
-          className={`px-5 py-2.5 rounded-full font-medium ${
-            subscribed
-              ? "bg-gray-200 text-black"
-              : "bg-black text-white"
-          }`}
-        >
-          {subscribed ? "Subscribed" : "Subscribe"}
-        </button>
+    </div>
 
-      </div>
+  </div>
+
+</div>
 
       {/* Tabs */}
       <div className="flex gap-8 mt-8 border-b">
@@ -99,9 +103,25 @@ function Channel() {
       </div>
 
       {/* Videos */}
-      <h2 className="text-xl font-bold mt-8 mb-5">
-        Videos
-      </h2>
+      <div className="flex items-center justify-between mt-3 mb-5">
+
+  <h2 className="text-xl font-bold">
+    Videos
+  </h2>
+
+  {isOwner && (
+    <button
+      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
+    >
+      <img
+        src="https://cdn-icons-png.flaticon.com/128/2740/2740657.png"
+        alt="Video options"
+        className="w-5 h-5 object-contain"
+      />
+    </button>
+  )}
+
+</div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
