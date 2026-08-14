@@ -1,1 +1,87 @@
 @import "tailwindcss";
+
+body {
+  margin: 0;
+  background-color: white;
+  color: #0f0f0f;
+}
+
+body.dark-mode {
+  background-color: #0f0f0f;
+  color: #f1f1f1;
+}
+
+body.dark-mode #root {
+  min-height: 100vh;
+  background-color: #0f0f0f;
+}
+
+/* Main page areas */
+body.dark-mode main,
+body.dark-mode aside {
+  background-color: #0f0f0f;
+  color: #f1f1f1;
+}
+
+/* Existing white sections */
+body.dark-mode .bg-white {
+  background-color: #0f0f0f ;
+}
+
+/* Light gray boxes/buttons */
+body.dark-mode .bg-gray-50,
+body.dark-mode .bg-gray-100 {
+  background-color: #272727 ;
+}
+
+body.dark-mode .bg-gray-200 {
+  background-color: #3f3f3f ;
+}
+
+/* Text */
+body.dark-mode .text-gray-600,
+body.dark-mode .text-gray-500 {
+  color: #aaaaaa ;
+}
+
+body.dark-mode .text-black {
+  color: white ;
+}
+
+/* Borders */
+body.dark-mode .border-gray-200,
+body.dark-mode .border-gray-300 {
+  border-color: #3f3f3f ;
+}
+
+/* Inputs */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background-color: #121212;
+  color: white;
+  border-color: #3f3f3f;
+}
+
+/* Hover */
+body.dark-mode .hover\:bg-gray-100:hover,
+body.dark-mode .hover\:bg-gray-200:hover {
+  background-color: #3f3f3f !important;
+}
+
+.volume-slider {
+  appearance: none;
+  height: 4px;
+  background: white;
+  border-radius: 10px;
+  outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+}

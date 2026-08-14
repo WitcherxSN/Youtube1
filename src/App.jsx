@@ -9,6 +9,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Channel from "./pages/Channel";
 import { videos as initialVideos } from "./data/videos";
+import CreateChannel from "./pages/CreateChannel";
 
 function App() {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -146,6 +147,12 @@ function App() {
         path="/login"
         element={<Login />}
       />
+
+            //Channel page
+           <Route
+           path="/createchannel"
+         element={<CreateChannel />}
+          />
 
     </Routes>
   );

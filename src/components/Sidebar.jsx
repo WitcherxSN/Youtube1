@@ -1,11 +1,15 @@
+import { useNavigate } from "react-router-dom";
+
 function Sidebar() {
+
+   const navigate = useNavigate();
   return (
     <aside className="w-60 h-[calc(100vh-60px)] overflow-y-auto px-3 py-3 bg-white text-sm shrink-0">
 
       {/* Main Section */}
       <div className="pb-1">
 
-        <a
+        <a onClick={() => navigate("/")}
           href="#"
           className="flex items-center gap-6 px-3 py-2.5 rounded-lg bg-gray-100 font-medium"
         >
@@ -74,7 +78,7 @@ function Sidebar() {
           Sign in to like videos, comment, and subscribe.
         </p>
 
-        <button className="border border-gray-300 text-blue-600 px-4 py-2 rounded-full font-medium hover:bg-blue-50">
+        <button onClick={() => navigate("/login")} className="border border-gray-300 text-blue-600 px-4 py-2 rounded-full font-medium hover:bg-blue-50">
           Sign in
         </button>
 
@@ -125,7 +129,7 @@ function Sidebar() {
 
         <button className="flex items-center gap-6 w-full px-3 py-2.5 rounded-lg hover:bg-gray-100">
           <span className="w-[21px] text-center text-xl">
-            ⌄
+            <img className="w-[21px] h-[21px] object-contain" src="https://cdn-icons-png.flaticon.com/128/15785/15785497.png" alt="" />
           </span>
           Show more
         </button>

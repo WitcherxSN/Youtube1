@@ -237,19 +237,37 @@ function deleteComment(id) {
               {/* Left Controls */}
               <div className="flex items-center gap-4">
 
-                <button
-                  onClick={togglePlay}
-                  className="text-white text-2xl"
-                >
-                  {isPlaying ? "❚❚" : "▶"}
-                </button>
+               <button
+  onClick={togglePlay}
+  className="w-8 h-8 flex items-center justify-center"
+>
+  {isPlaying ? (
+    <span className="text-white text-2xl font-bold">
+      ❚❚
+    </span>
+  ) : (
+    <img
+      src="https://cdn-icons-png.flaticon.com/128/3874/3874990.png"
+      alt="Play"
+      className="w-6 h-6 object-contain invert"
+    />
+  )}
+</button>
 
                 <button
-                  onClick={toggleMute}
-                  className="text-white text-xl"
-                >
-                  {isMuted ? "🔇" : "🔊"}
-                </button>
+  onClick={toggleMute}
+  className="w-8 h-8 flex items-center justify-center"
+>
+  <img
+    src={
+      isMuted
+        ? "https://cdn-icons-png.flaticon.com/128/727/727240.png"
+        : "https://cdn-icons-png.flaticon.com/128/2326/2326033.png"
+    }
+    alt={isMuted ? "Muted" : "Volume"}
+    className="w-5 h-5 object-contain invert"
+  />
+</button>
 
                 <input
                   type="range"
@@ -258,7 +276,7 @@ function deleteComment(id) {
                   step="0.1"
                   value={volume}
                   onChange={handleVolumeChange}
-                  className="w-24 cursor-pointer"
+                  className="volume-slider w-24 cursor-pointer"
                 />
 
                 <span className="text-white text-sm">
