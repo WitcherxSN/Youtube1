@@ -19,7 +19,9 @@ function VideoPlayer() {
   const [likeCount, setLikeCount] = useState(1200);
   const [subscribed, setSubscribed] = useState(false);
   const [commentText, setCommentText] = useState("");
-  
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState("");
+  const currentUser = "Shravan";
 
 const [comments, setComments] = useState([
   {
@@ -164,6 +166,35 @@ function formatTime(time) {
 
   setComments([...comments, newComment]);
   setCommentText("");
+}
+
+function startEdit(comment) {
+  setEditingId(comment.id);
+  setEditText(comment.text);
+}
+
+function saveEdit(id) {
+  if (editText.trim() === "") {
+    return;
+  }
+
+  const updatedComments = comments.map((comment) =>
+    comment.id === id
+      ? { ...comment, text: editText }
+      : comment
+  );
+
+  setComments(updatedComments);
+  setEditingId(null);
+  setEditText("");
+}
+
+function deleteComment(id) {
+  const updatedComments = comments.filter(
+    (comment) => comment.id !== id
+  );
+
+  setComments(updatedComments);
 }
 
   return (
@@ -474,9 +505,43 @@ function formatTime(time) {
                     </span>
                   </p>
 
-                  <p className="text-sm mt-1">
-                    {comment.text}
-                  </p>
+                  {editingId === comment.id ? (
+                               <div className="mt-2">
+
+                                 <input
+                                   type="text"
+                                   value={editText}
+                                   onChange={(e) => setEditText(e.target.value)}
+                                   className="w-full border-b border-gray-300 py-2 outline-none focus:border-black"
+                                 />
+
+                                 <div className="flex gap-2 mt-2">
+
+                                   <button
+                                     onClick={() => saveEdit(comment.id)}
+                                     className="px-3 py-1 bg-blue-600 text-white rounded-full text-sm"
+                                   >
+                                     Save
+                                   </button>
+
+                                   <button
+                                     onClick={() => {
+                                       setEditingId(null);
+                                       setEditText("");
+                                     }}
+                                     className="px-3 py-1 hover:bg-gray-100 rounded-full text-sm"
+                                   >
+                                     Cancel
+                                   </button>
+
+                                 </div>
+
+                               </div>
+                             ) : (
+                               <p className="text-sm mt-1">
+                                 {comment.text}
+                               </p>
+                             )}
 
 
                   {/* Comment Actions */}
@@ -519,6 +584,24 @@ function formatTime(time) {
                       Reply
 
                     </button>
+
+                    {comment.user === currentUser && (
+  <>
+    <button
+      onClick={() => startEdit(comment)}
+      className="px-3 py-2 rounded-full hover:bg-gray-100 font-medium text-sm"
+    >
+      Edit
+    </button>
+
+    <button
+      onClick={() => deleteComment(comment.id)}
+      className="px-3 py-2 rounded-full hover:bg-gray-100 font-medium text-sm"
+    >
+      Delete
+    </button>
+  </>
+)}
 
                   </div>
 

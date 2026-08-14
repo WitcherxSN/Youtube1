@@ -6,6 +6,7 @@ import VideoCard from "./components/VideoCard";
 import { videos } from "./data/videos";
 import { Routes, Route } from "react-router-dom";
 import VideoPlayer from "./pages/VideoPlayer";
+import Register from "./pages/Register";
 
 function App() {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -32,6 +33,10 @@ function handleSearch() {
 
   return (
      <Routes>
+      <Route
+  path="/register"
+  element={<Register />}
+/>
 
     <Route
       path="/"
@@ -82,6 +87,8 @@ function handleSearch() {
     <Route
   path="/video/:id"
   element={<VideoPlayer />}
+
+  
 />
 
   </Routes>
