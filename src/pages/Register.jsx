@@ -71,7 +71,7 @@ function Register() {
         </h2>
 
         <p className="text-sm text-gray-500 text-center mt-2 mb-6">
-          Register to continue to YouTube Clone
+          Register to continue 
         </p>
 
         {error && (

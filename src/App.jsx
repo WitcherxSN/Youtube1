@@ -7,6 +7,7 @@ import { videos } from "./data/videos";
 import { Routes, Route } from "react-router-dom";
 import VideoPlayer from "./pages/VideoPlayer";
 import Register from "./pages/Register";
+import Login from "./pages/Login";
 
 function App() {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -37,7 +38,10 @@ function handleSearch() {
   path="/register"
   element={<Register />}
 />
-
+<Route
+  path="/login"
+  element={<Login />}
+/>
     <Route
       path="/"
       element={
