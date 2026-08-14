@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Login() {
   const navigate = useNavigate();
@@ -17,30 +18,44 @@ function Login() {
       [e.target.name]: e.target.value,
     });
   }
+async function handleSubmit(e) {
+  e.preventDefault();
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  if (
+    formData.email.trim() === "" ||
+    formData.password.trim() === ""
+  ) {
+    setError("Please fill all fields");
+    return;
+  }
 
-    if (
-      formData.email.trim() === "" ||
-      formData.password.trim() === ""
-    ) {
-      setError("Please fill all fields");
-      return;
-    }
-
-    if (!formData.email.includes("@")) {
-      setError("Please enter a valid email");
-      return;
-    }
-
+  try {
     setError("");
 
-    // Backend login will be connected later
-    console.log(formData);
+    const response = await axios.post(
+      "http://localhost:5000/api/auth/login",
+      formData
+    );
+
+    localStorage.setItem(
+      "token",
+      response.data.token
+    );
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(response.data.user)
+    );
 
     navigate("/");
+
+  } catch (error) {
+    setError(
+      error.response?.data?.message ||
+      "Login failed"
+    );
   }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

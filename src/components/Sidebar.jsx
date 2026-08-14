@@ -2,7 +2,13 @@ import { useNavigate } from "react-router-dom";
 
 function Sidebar() {
 
+
    const navigate = useNavigate();
+   const storedUser = localStorage.getItem("user");
+
+const user = storedUser
+  ? JSON.parse(storedUser)
+  : null;
   return (
     <aside className="w-60 h-[calc(100vh-60px)] overflow-y-auto px-3 py-3 bg-white text-sm shrink-0">
 
@@ -72,17 +78,48 @@ function Sidebar() {
       </div>
 
       {/* Sign In Section */}
-      <div className="border-t border-b border-gray-200 px-3 py-4 mt-2">
+     <div className="border-t border-b border-gray-200 px-3 py-4 mt-2">
 
-        <p className="mb-3 leading-5">
-          Sign in to like videos, comment, and subscribe.
+  {user ? (
+
+    <div className="flex items-center gap-3">
+
+      {/* User Circle */}
+      <div className="w-9 h-9 rounded-full bg-purple-600 text-white flex items-center justify-center font-semibold">
+        {user.username.charAt(0).toUpperCase()}
+      </div>
+
+      {/* User Name */}
+      <div>
+        <p className="font-semibold">
+          {user.username}
         </p>
 
-        <button onClick={() => navigate("/login")} className="border border-gray-300 text-blue-600 px-4 py-2 rounded-full font-medium hover:bg-blue-50">
-          Sign in
-        </button>
-
+        <p className="text-xs text-gray-500">
+          Signed in
+        </p>
       </div>
+
+    </div>
+
+  ) : (
+
+    <>
+      <p className="mb-3 leading-5">
+        Sign in to like videos, comment, and subscribe.
+      </p>
+
+      <button
+        onClick={() => navigate("/login")}
+        className="border border-gray-300 text-blue-600 px-4 py-2 rounded-full font-medium hover:bg-blue-50"
+      >
+        Sign in
+      </button>
+    </>
+
+  )}
+
+</div>
 
       {/* Explore */}
       <div className="border-b border-gray-200 py-3">

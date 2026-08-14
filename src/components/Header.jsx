@@ -8,6 +8,12 @@ function Header({
   handleSearch,
 }) {
   const navigate = useNavigate();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const storedUser = localStorage.getItem("user");
+
+  const user = storedUser
+  ? JSON.parse(storedUser)
+  : null;
 
   const [showMenu, setShowMenu] = useState(false);
 
@@ -215,17 +221,84 @@ function Header({
 
 
         {/* Sign In */}
+{user ? (
+  <div className="relative">
+
+    <button
+      onClick={() => setShowUserMenu(!showUserMenu)}
+      className="w-9 h-9 rounded-full bg-purple-600 text-white flex items-center justify-center font-semibold text-lg"
+    >
+      {user.username.charAt(0).toUpperCase()}
+    </button>
+
+    {showUserMenu && (
+      <div
+        className={`absolute right-0 top-12 w-56 rounded-xl shadow-lg border overflow-hidden ${
+          darkMode
+            ? "bg-[#282828] border-gray-700 text-white"
+            : "bg-white border-gray-200 text-black"
+        }`}
+      >
+
+        <div className="px-4 py-3 border-b border-gray-200">
+          <p className="font-semibold">
+            {user.username}
+          </p>
+
+          <p className="text-xs text-gray-500">
+            {user.email}
+          </p>
+        </div>
+
         <button
-          onClick={() => navigate("/login")}
-          className={`border px-4 py-2 rounded-full font-medium ${
+          onClick={() => {
+            navigate("/create-channel");
+            setShowUserMenu(false);
+          }}
+          className={`w-full text-left px-4 py-3 text-sm ${
             darkMode
-              ? "border-[#3f3f3f] text-[#3ea6ff] hover:bg-[#263850]"
-              : "border-gray-300 text-blue-600 hover:bg-blue-50"
+              ? "hover:bg-[#3f3f3f]"
+              : "hover:bg-gray-100"
           }`}
         >
-          Sign in
+          Create Channel
         </button>
 
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+            setShowUserMenu(false);
+
+            navigate("/");
+            window.location.reload();
+          }}
+          className={`w-full text-left px-4 py-3 text-sm text-red-600 ${
+            darkMode
+              ? "hover:bg-[#3f3f3f]"
+              : "hover:bg-gray-100"
+          }`}
+        >
+          Logout
+        </button>
+
+      </div>
+    )}
+
+  </div>
+) : (
+  <button
+    onClick={() => navigate("/login")}
+    className={`border px-4 py-2 rounded-full font-medium ${
+      darkMode
+        ? "border-[#3f3f3f] text-[#3ea6ff] hover:bg-[#263850]"
+        : "border-gray-300 text-blue-600 hover:bg-blue-50"
+    }`}
+  >
+    Sign in
+  </button>
+)}
       </div>
 
     </header>

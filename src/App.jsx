@@ -109,7 +109,7 @@ function App() {
 
       {/* Channel Page */}
       <Route
-        path="/channel/:channelName"
+        path="/channel/:handle"
         element={
           <>
             <Header
@@ -150,7 +150,7 @@ function App() {
 
             //Channel page
            <Route
-           path="/createchannel"
+           path="/create-channel"
          element={<CreateChannel />}
           />
 

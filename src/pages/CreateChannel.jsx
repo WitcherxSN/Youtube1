@@ -1,6 +1,10 @@
 import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function CreateChannel() {
+
+  const navigate = useNavigate();
   const [channelData, setChannelData] = useState({
     channelName: "",
     handle: "",
@@ -18,26 +22,46 @@ function CreateChannel() {
     });
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(e) {
+  e.preventDefault();
 
-    if (
-      channelData.channelName.trim() === "" ||
-      channelData.handle.trim() === "" ||
-      channelData.description.trim() === ""
-    ) {
-      setError("Please fill all required fields");
-      return;
-    }
+  if (
+    channelData.channelName.trim() === "" ||
+    channelData.handle.trim() === "" ||
+    channelData.description.trim() === ""
+  ) {
+    setError("Please fill all required fields");
+    return;
+  }
 
+  try {
     setError("");
 
-    console.log(channelData);
+    const token = localStorage.getItem("token");
 
-    alert("Channel created successfully");
+    const response = await axios.post(
+      "http://localhost:5000/api/channels",
+      channelData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-    // Backend and real user connection will come later
+    const createdChannel = response.data.channel;
+
+    navigate(
+  `/channel/${createdChannel.handle}`
+);
+
+  } catch (error) {
+    setError(
+      error.response?.data?.message ||
+      "Channel creation failed"
+    );
   }
+}
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">

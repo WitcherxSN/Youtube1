@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Register() {
   const navigate = useNavigate();
@@ -18,36 +19,45 @@ function Register() {
       [e.target.name]: e.target.value,
     });
   }
+async function handleSubmit(e) {
+  e.preventDefault();
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  if (
+    formData.username.trim() === "" ||
+    formData.email.trim() === "" ||
+    formData.password.trim() === ""
+  ) {
+    setError("Please fill all fields");
+    return;
+  }
 
-    if (
-      formData.username.trim() === "" ||
-      formData.email.trim() === "" ||
-      formData.password.trim() === ""
-    ) {
-      setError("Please fill all fields");
-      return;
-    }
+  if (!formData.email.includes("@")) {
+    setError("Please enter a valid email");
+    return;
+  }
 
-    if (!formData.email.includes("@")) {
-      setError("Please enter a valid email");
-      return;
-    }
+  if (formData.password.length < 6) {
+    setError("Password must be at least 6 characters");
+    return;
+  }
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
-
+  try {
     setError("");
 
-    // Backend registration will be connected later
-    console.log(formData);
+    await axios.post(
+      "http://localhost:5000/api/auth/register",
+      formData
+    );
 
     navigate("/login");
+
+  } catch (error) {
+    setError(
+      error.response?.data?.message ||
+      "Registration failed"
+    );
   }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
