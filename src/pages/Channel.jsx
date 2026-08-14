@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { videos } from "../data/videos";
+import { useParams, useNavigate } from "react-router-dom";
 
-function Channel() {
+
+
+function Channel({videos, setVideos}) {
     const [isOwner] = useState(true);
   const [showVideoMenu, setShowVideoMenu] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(false);
   const { channelName } = useParams();
   const [subscribed, setSubscribed] = useState(false);
+  const navigate = useNavigate();
   const [newVideo, setNewVideo] = useState({
   title: "",
   description: "",
@@ -16,9 +18,11 @@ function Channel() {
   videoUrl: "",
 });
 
-  const channelVideos = videos.filter(
-    (video) => video.channel === channelName
-  );
+  const initialChannelVideos = videos.filter(
+  (video) => video.channel === channelName
+);
+
+const [channelVideos, setChannelVideos] = useState(initialChannelVideos);
 
   const channel = channelVideos[0];
 
@@ -37,6 +41,45 @@ function Channel() {
     ...newVideo,
     [e.target.name]: e.target.value,
   });
+}
+
+function uploadVideo() {
+  if (
+    newVideo.title.trim() === "" ||
+    newVideo.description.trim() === "" ||
+    newVideo.category === "" ||
+    newVideo.thumbnail.trim() === "" ||
+    newVideo.videoUrl.trim() === ""
+  ) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  const videoToAdd = {
+    id: Date.now(),
+    title: newVideo.title,
+    description: newVideo.description,
+    category: newVideo.category,
+    thumbnail: newVideo.thumbnail,
+    videoUrl: newVideo.videoUrl,
+    channel: channel.channel,
+    channelImage: channel.channelImage || "",
+    views: "0",
+    uploadedAt: "Just now",
+  };
+
+  setChannelVideos([videoToAdd, ...channelVideos]);
+  setVideos([videoToAdd, ...videos,]);
+
+  setNewVideo({
+    title: "",
+    description: "",
+    category: "",
+    thumbnail: "",
+    videoUrl: "",
+  });
+
+  setShowUploadForm(false);
 }
 
   return (
@@ -247,6 +290,7 @@ function Channel() {
     </button>
 
     <button
+    onClick={uploadVideo}
       className="px-5 py-2 rounded-full bg-blue-600 text-white font-medium"
     >
       Upload
@@ -265,6 +309,7 @@ function Channel() {
 
           <div
             key={video.id}
+            onClick={() => navigate(`/video/${video.id}`)}
             className="cursor-pointer"
           >
 

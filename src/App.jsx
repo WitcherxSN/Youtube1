@@ -8,13 +8,14 @@ import VideoPlayer from "./pages/VideoPlayer";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Channel from "./pages/Channel";
-import { videos } from "./data/videos";
+import { videos as initialVideos } from "./data/videos";
 
 function App() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchInput, setSearchInput] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [videos, setVideos] = useState(initialVideos);
 
   const filteredVideos = videos.filter((video) => {
     const matchesCategory =
@@ -99,7 +100,7 @@ function App() {
               handleSearch={handleSearch}
             />
 
-            <VideoPlayer />
+            <VideoPlayer videos={videos} />
           </>
         }
       />
@@ -122,7 +123,8 @@ function App() {
 
               {showSidebar && <Sidebar/>}
               <main className="flex-1">
-                <Channel />
+                <Channel videos={videos}
+                 setVideos={setVideos} />
                 </main>
             </div>
 

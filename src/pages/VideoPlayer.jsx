@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { videos } from "../data/videos";
 
 
 
-function VideoPlayer() {
+
+function VideoPlayer({videos}) {
   const { id } = useParams();
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
