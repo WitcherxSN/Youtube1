@@ -6,6 +6,8 @@ import axios from "axios";
 
 
 function VideoPlayer({videos}) {
+  const [comments, setComments] = useState([]);
+  const [commentsLoading, setCommentsLoading] = useState(true);
   const { id } = useParams();
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -24,20 +26,13 @@ function VideoPlayer({videos}) {
   const navigate = useNavigate();
   const [backendVideo, setBackendVideo] = useState(null);
   const [loadingVideo, setLoadingVideo] = useState(true);
-  const currentUser = "Shravan";
+ 
+  const storedUser = localStorage.getItem("user");
 
-const [comments, setComments] = useState([
-  {
-    id: 1,
-    user: "Shravan",
-    text: "Great video! Very helpful.",
-  },
-  {
-    id: 2,
-    user: "Rahul",
-    text: "This explanation was really clear.",
-  },
-]);
+const currentUser = storedUser
+  ? JSON.parse(storedUser)
+  : null;
+
 
   const localVideo = videos.find(
   (video) =>
@@ -69,6 +64,30 @@ useEffect(() => {
 
   fetchVideo();
 }, [id, localVideo]);
+
+useEffect(() => {
+  async function fetchComments() {
+    if (!video) return;
+
+    try {
+      setCommentsLoading(true);
+
+      const videoId = video._id || video.id;
+
+      const response = await axios.get(
+        `http://localhost:5000/api/comments/video/${videoId}`
+      );
+
+      setComments(response.data);
+    } catch (error) {
+      console.log("Comments fetch error:", error);
+    } finally {
+      setCommentsLoading(false);
+    }
+  }
+
+  fetchComments();
+}, [video]);
 
   function handleProgressClick(e) {
   const progressBar = e.currentTarget;
@@ -193,50 +212,146 @@ function formatTime(time) {
     );
   }
 
-  function addComment() {
+  async function addComment() {
   if (commentText.trim() === "") {
     return;
   }
 
-  const newComment = {
-    id: Date.now(),
-    user: "Shravan",
-    text: commentText,
-  };
+  try {
+    const token = localStorage.getItem("token");
 
-  setComments([...comments, newComment]);
-  setCommentText("");
+    if (!token) {
+      alert("Please sign in to comment");
+      navigate("/login");
+      return;
+    }
+
+    const videoId = video._id || video.id;
+
+    const response = await axios.post(
+      "http://localhost:5000/api/comments",
+      {
+        text: commentText,
+        videoId: videoId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const newComment = response.data.comment;
+
+    // Get logged-in user information
+    const storedUser = JSON.parse(
+      localStorage.getItem("user")
+    );
+
+    const commentWithUser = {
+      ...newComment,
+      user: {
+        _id: storedUser.id,
+        username: storedUser.username,
+        avatar: storedUser.avatar,
+      },
+    };
+
+    setComments([
+      commentWithUser,
+      ...comments,
+    ]);
+
+    setCommentText("");
+
+  } catch (error) {
+    console.log(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Could not add comment"
+    );
+  }
 }
 
 function startEdit(comment) {
-  setEditingId(comment.id);
+  setEditingId(comment._id);
   setEditText(comment.text);
 }
 
-function saveEdit(id) {
+async function saveEdit(id) {
   if (editText.trim() === "") {
     return;
   }
 
-  const updatedComments = comments.map((comment) =>
-    comment.id === id
-      ? { ...comment, text: editText }
-      : comment
-  );
+  try {
+    const token = localStorage.getItem("token");
 
-  setComments(updatedComments);
-  setEditingId(null);
-  setEditText("");
+    const response = await axios.put(
+      `http://localhost:5000/api/comments/${id}`,
+      {
+        text: editText,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const updatedComment = response.data.comment;
+
+    const updatedComments = comments.map((comment) =>
+      comment._id === id
+        ? {
+            ...comment,
+            text: updatedComment.text,
+          }
+        : comment
+    );
+
+    setComments(updatedComments);
+
+    setEditingId(null);
+    setEditText("");
+
+  } catch (error) {
+    console.log("Edit comment error:", error);
+
+    alert(
+      error.response?.data?.message ||
+      "Could not edit comment"
+    );
+  }
 }
+async function deleteComment(id) {
+  try {
+    const token = localStorage.getItem("token");
 
-function deleteComment(id) {
-  const updatedComments = comments.filter(
-    (comment) => comment.id !== id
-  );
+    await axios.delete(
+      `http://localhost:5000/api/comments/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-  setComments(updatedComments);
+    const updatedComments = comments.filter(
+      (comment) => comment._id !== id
+    );
+
+    setComments(updatedComments);
+
+  } catch (error) {
+    console.log("Delete comment error:", error);
+
+    alert(
+      error.response?.data?.message ||
+      "Could not delete comment"
+    );
+  }
 }
-
   return (
   <div className="p-6">
 
@@ -557,7 +672,7 @@ function deleteComment(id) {
 
                 {/* Avatar */}
                 <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center font-semibold shrink-0">
-                  {comment.user.charAt(0)}
+                 {comment.user?.username?.charAt(0).toUpperCase()}
                 </div>
 
 
@@ -565,14 +680,14 @@ function deleteComment(id) {
                 <div className="flex-1">
 
                   <p className="text-sm font-semibold">
-                    @{comment.user}
+                    @{comment.user?.username}
 
                     <span className="ml-2 text-xs text-gray-500 font-normal">
                       2 days ago
                     </span>
                   </p>
 
-                  {editingId === comment.id ? (
+                  {editingId === comment._id ? (
                                <div className="mt-2">
 
                                  <input
@@ -585,7 +700,7 @@ function deleteComment(id) {
                                  <div className="flex gap-2 mt-2">
 
                                    <button
-                                     onClick={() => saveEdit(comment.id)}
+                                     onClick={() => saveEdit(comment._id)}
                                      className="px-3 py-1 bg-blue-600 text-white rounded-full text-sm"
                                    >
                                      Save
@@ -652,23 +767,24 @@ function deleteComment(id) {
 
                     </button>
 
-                    {comment.user === currentUser && (
-  <>
-    <button
-      onClick={() => startEdit(comment)}
-      className="px-3 py-2 rounded-full hover:bg-gray-100 font-medium text-sm"
-    >
-      Edit
-    </button>
+                   {currentUser &&
+  String(comment.user?._id) === String(currentUser.id) && (
+    <>
+      <button
+        onClick={() => startEdit(comment)}
+        className="px-3 py-2 rounded-full hover:bg-gray-100 font-medium text-sm"
+      >
+        Edit
+      </button>
 
-    <button
-      onClick={() => deleteComment(comment.id)}
-      className="px-3 py-2 rounded-full hover:bg-gray-100 font-medium text-sm"
-    >
-      Delete
-    </button>
-  </>
-)}
+      <button
+        onClick={() => deleteComment(comment._id)}
+        className="px-3 py-2 rounded-full hover:bg-gray-100 font-medium text-sm"
+      >
+        Delete
+      </button>
+    </>
+  )}
 
                   </div>
 

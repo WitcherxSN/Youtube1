@@ -2,6 +2,7 @@ import express from "express";
 import Comment from "../models/Comment.js";
 import Video from "../models/Video.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
@@ -14,6 +15,13 @@ router.post("/", authMiddleware, async (req, res) => {
     if (!text || !videoId) {
       return res.status(400).json({
         message: "Comment text and video ID are required",
+      });
+    }
+
+    // Make sure this is a MongoDB video ID
+    if (!mongoose.isValidObjectId(videoId)) {
+      return res.status(400).json({
+        message: "Invalid video ID",
       });
     }
 
@@ -33,12 +41,18 @@ router.post("/", authMiddleware, async (req, res) => {
 
     await newComment.save();
 
+    const populatedComment = await Comment.findById(
+      newComment._id
+    ).populate("user", "username avatar");
+
     res.status(201).json({
       message: "Comment added successfully",
-      comment: newComment,
+      comment: populatedComment,
     });
 
   } catch (error) {
+    console.log("ADD COMMENT ERROR:", error.message);
+
     res.status(500).json({
       message: "Server error",
     });

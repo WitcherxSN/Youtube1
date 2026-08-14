@@ -5,23 +5,36 @@ function VideoCard({
   thumbnail,
   title,
   channel,
+  channelHandle,
   views,
   uploadedAt,
   channelImage,
 }) {
   const navigate = useNavigate();
 
+
   function openVideo() {
     navigate(`/video/${id}`);
   }
 
+
   function openChannel(e) {
     e.stopPropagation();
 
+    if (!channelHandle) {
+      console.log(
+        "Channel handle missing for:",
+        channel
+      );
+
+      return;
+    }
+
     navigate(
-      `/channel/${encodeURIComponent(channel)}`
+      `/channel/${channelHandle}`
     );
   }
+
 
   return (
     <div
@@ -29,14 +42,17 @@ function VideoCard({
       className="cursor-pointer"
     >
 
+      {/* Thumbnail */}
       <img
         src={thumbnail}
         alt={title}
         className="w-full aspect-video object-cover rounded-xl"
       />
 
+
       <div className="flex gap-3 mt-3">
 
+        {/* Channel Image */}
         {channelImage && (
           <img
             src={channelImage}
@@ -46,12 +62,16 @@ function VideoCard({
           />
         )}
 
+
         <div>
 
+          {/* Title */}
           <h3 className="font-semibold text-base leading-5">
             {title}
           </h3>
 
+
+          {/* Channel Name */}
           <p
             onClick={openChannel}
             className="text-sm text-gray-600 mt-1 hover:text-black cursor-pointer"
@@ -59,6 +79,8 @@ function VideoCard({
             {channel}
           </p>
 
+
+          {/* Views + Upload Time */}
           <p className="text-sm text-gray-600">
             {views} views • {uploadedAt}
           </p>
