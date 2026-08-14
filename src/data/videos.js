@@ -8,7 +8,7 @@ export const videos = [
     category: "React",
     thumbnail:
       "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    channelImage: "",
+    channelImage: "https://i.pinimg.com/736x/41/81/19/418119091bdce8f57afd6219a3630b45.jpg",
     videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
     description:
     "Learn the basics of React in this quick tutorial covering components, props, state and modern React concepts.",
@@ -23,7 +23,7 @@ export const videos = [
     category: "JavaScript",
     thumbnail:
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
-    channelImage: "",
+    channelImage: "https://i.pinimg.com/736x/03/ee/cf/03eecfdcfc564da82dca4813cddfcbf2.jpg",
     videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
     description: "Description",
   },
@@ -37,7 +37,7 @@ export const videos = [
     category: "Gaming",
     thumbnail:
       "https://images.unsplash.com/photo-1550745165-9bc0b252726f",
-    channelImage: "",
+    channelImage: "https://i.pinimg.com/736x/69/e4/69/69e4692a4b3ed38947b348ca52089c42.jpg",
     videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
     description: "Description",
   },
@@ -51,7 +51,7 @@ export const videos = [
     category: "Music",
     thumbnail:
       "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b",
-    channelImage: "",
+    channelImage: "https://i.pinimg.com/736x/35/ba/79/35ba799cdf74d05d6db682140822314d.jpg",
     videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
      description: "Description",
   },
@@ -65,7 +65,7 @@ export const videos = [
     category: "Movies",
     thumbnail:
       "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba",
-    channelImage: "",
+    channelImage: "https://i.pinimg.com/736x/18/bf/d7/18bfd7cf1de5a4daef6f66d65fa851a3.jpg",
     videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
      description: "Description",
   },
@@ -79,7 +79,7 @@ export const videos = [
     category: "News",
     thumbnail:
       "https://images.unsplash.com/photo-1504711434969-e33886168f5c",
-    channelImage: "",
+    channelImage: "https://i.pinimg.com/736x/db/e9/e7/dbe9e703efd4aafce6e1fc03c9f0313f.jpg",
     videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
      description: "Description",
   },
@@ -93,7 +93,7 @@ export const videos = [
     category: "React",
     thumbnail:
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c",
-    channelImage: "",
+    channelImage: "https://i.pinimg.com/736x/bc/a2/d7/bca2d7839210a8f9485c0f88800a2281.jpg",
     videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
      description: "Description",
   },
@@ -107,7 +107,7 @@ export const videos = [
     category: "Gaming",
     thumbnail:
       "https://images.unsplash.com/photo-1511512578047-dfb367046420",
-    channelImage: "",
+    channelImage: "https://i.pinimg.com/736x/6f/23/3b/6f233b8d8dd360fc1febdfe85d5f1101.jpg",
     videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",
      description: "Description",
   },
