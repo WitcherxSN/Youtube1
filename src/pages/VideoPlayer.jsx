@@ -3,11 +3,11 @@ import { useParams } from "react-router-dom";
 import { videos } from "../data/videos";
 
 
+
 function VideoPlayer() {
   const { id } = useParams();
 
   const videoRef = useRef(null);
-
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);

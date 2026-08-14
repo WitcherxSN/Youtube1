@@ -90,9 +90,18 @@ function handleSearch() {
 
     <Route
   path="/video/:id"
-  element={<VideoPlayer />}
+  element={
+    <>
+      <Header
+        toggleSidebar={() => setShowSidebar(!showSidebar)}
+        searchInput={searchInput}
+        setSearchInput={setSearchInput}
+        handleSearch={handleSearch}
+      />
 
-  
+      <VideoPlayer />
+    </>
+  }
 />
 
   </Routes>
