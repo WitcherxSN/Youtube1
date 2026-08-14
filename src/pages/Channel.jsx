@@ -4,9 +4,17 @@ import { videos } from "../data/videos";
 
 function Channel() {
     const [isOwner] = useState(true);
+  const [showVideoMenu, setShowVideoMenu] = useState(false);
+  const [showUploadForm, setShowUploadForm] = useState(false);
   const { channelName } = useParams();
-
   const [subscribed, setSubscribed] = useState(false);
+  const [newVideo, setNewVideo] = useState({
+  title: "",
+  description: "",
+  category: "",
+  thumbnail: "",
+  videoUrl: "",
+});
 
   const channelVideos = videos.filter(
     (video) => video.channel === channelName
@@ -23,6 +31,13 @@ function Channel() {
       </div>
     );
   }
+
+  function handleVideoChange(e) {
+  setNewVideo({
+    ...newVideo,
+    [e.target.name]: e.target.value,
+  });
+}
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-6">
@@ -103,25 +118,146 @@ function Channel() {
       </div>
 
       {/* Videos */}
-      <div className="flex items-center justify-between mt-3 mb-5">
+      <div className="relative flex items-center justify-between mt-3 mb-5">
 
   <h2 className="text-xl font-bold">
     Videos
   </h2>
 
   {isOwner && (
-    <button
-      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
-    >
-      <img
-        src="https://cdn-icons-png.flaticon.com/128/2740/2740657.png"
-        alt="Video options"
-        className="w-5 h-5 object-contain"
-      />
-    </button>
+    <div className="relative">
+
+      <button
+        onClick={() => setShowVideoMenu(!showVideoMenu)}
+        className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center"
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/128/2740/2740657.png"
+          alt="Video options"
+          className="w-5 h-5 object-contain"
+        />
+      </button>
+
+      {showVideoMenu && (
+        <div className="absolute right-0 top-11 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-20 overflow-hidden">
+
+          <button
+            onClick={() => {
+              setShowUploadForm(true);
+              setShowVideoMenu(false);
+            }}
+            className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm"
+          >
+            Upload Video
+          </button>
+
+          <button
+            onClick={() => setShowVideoMenu(false)}
+            className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm text-red-600"
+          >
+            Delete Video
+          </button>
+
+        </div>
+      )}
+
+    </div>
   )}
 
 </div>
+         {showUploadForm && (
+  <div className="mb-6 border border-gray-200 rounded-xl p-5 bg-white">
+
+    <div className="flex items-center justify-between mb-4">
+
+      <h3 className="text-lg font-semibold">
+        Upload Video
+      </h3>
+
+      <button
+        onClick={() => setShowUploadForm(false)}
+        className="text-xl"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div className="space-y-4">
+
+  <input
+    type="text"
+    name="title"
+    value={newVideo.title}
+    onChange={handleVideoChange}
+    placeholder="Video title"
+    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
+  />
+
+  <textarea
+    name="description"
+    value={newVideo.description}
+    onChange={handleVideoChange}
+    placeholder="Video description"
+    rows="4"
+    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
+  />
+
+  <select
+    name="category"
+    value={newVideo.category}
+    onChange={handleVideoChange}
+    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none"
+  >
+    <option value="">Select category</option>
+    <option value="React">React</option>
+    <option value="JavaScript">JavaScript</option>
+    <option value="Gaming">Gaming</option>
+    <option value="Music">Music</option>
+    <option value="News">News</option>
+    <option value="Live">Live</option>
+    <option value="Movies">Movies</option>
+  </select>
+
+  <input
+    type="text"
+    name="thumbnail"
+    value={newVideo.thumbnail}
+    onChange={handleVideoChange}
+    placeholder="Thumbnail URL"
+    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
+  />
+
+  <input
+    type="text"
+    name="videoUrl"
+    value={newVideo.videoUrl}
+    onChange={handleVideoChange}
+    placeholder="Video URL"
+    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
+  />
+
+  <div className="flex justify-end gap-3">
+
+    <button
+      onClick={() => setShowUploadForm(false)}
+      className="px-4 py-2 rounded-full hover:bg-gray-100"
+    >
+      Cancel
+    </button>
+
+    <button
+      className="px-5 py-2 rounded-full bg-blue-600 text-white font-medium"
+    >
+      Upload
+    </button>
+
+  </div>
+
+</div>
+
+  </div>
+)}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
