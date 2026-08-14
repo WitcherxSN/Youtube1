@@ -1,12 +1,11 @@
 import { useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { videos } from "../data/videos";
 
 
 
 function VideoPlayer() {
   const { id } = useParams();
-
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -21,6 +20,7 @@ function VideoPlayer() {
   const [commentText, setCommentText] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
+  const navigate = useNavigate();
   const currentUser = "Shravan";
 
 const [comments, setComments] = useState([
@@ -298,12 +298,15 @@ function deleteComment(id) {
               <img
                 src={video.channelImage}
                 alt={video.channel}
-                className="w-10 h-10 rounded-full object-cover"
+                onClick={() =>
+                    navigate(`/channel/${encodeURIComponent(video.channel)}`)}
+                className="w-10 h-10 rounded-full object-cover cursor-pointer"
               />
             )}
 
             <div>
-              <p className="font-semibold">
+              <p onClick={() => navigate(`/channel/${encodeURIComponent(video.channel)}`)}
+              className="font-semibold cursor-pointer hover:text-gray-700">
                 {video.channel}
               </p>
 
