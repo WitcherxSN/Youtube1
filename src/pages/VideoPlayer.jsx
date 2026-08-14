@@ -18,7 +18,7 @@ function VideoPlayer({videos}) {
   const [isMuted, setIsMuted] = useState(false);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
-  const [likeCount, setLikeCount] = useState(1200);
+  const [likeCount, setLikeCount] = useState(0);
   const [subscribed, setSubscribed] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -40,6 +40,8 @@ const currentUser = storedUser
 );
 
 const video = localVideo || backendVideo;
+
+
 
 useEffect(() => {
   async function fetchVideo() {
@@ -101,30 +103,66 @@ useEffect(() => {
   videoRef.current.currentTime = newTime;
 }
 
-function handleLike() {
-  if (liked) {
-    setLiked(false);
-    setLikeCount(likeCount - 1);
-  } else {
-    setLiked(true);
-    setLikeCount(likeCount + 1);
 
-    if (disliked) {
-      setDisliked(false);
+async function handleLike() {
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please sign in to like videos");
+      navigate("/login");
+      return;
     }
+
+    const videoId = video._id || video.id;
+
+    const response = await axios.put(
+      `http://localhost:5000/api/videos/${videoId}/like`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setLikeCount(response.data.likes);
+    setLiked(response.data.liked);
+    setDisliked(response.data.disliked);
+
+  } catch (error) {
+    console.log("Like error:", error);
   }
 }
 
-function handleDislike() {
-  if (disliked) {
-    setDisliked(false);
-  } else {
-    setDisliked(true);
+async function handleDislike() {
+  try {
+    const token = localStorage.getItem("token");
 
-    if (liked) {
-      setLiked(false);
-      setLikeCount(likeCount - 1);
+    if (!token) {
+      alert("Please sign in to dislike videos");
+      navigate("/login");
+      return;
     }
+
+    const videoId = video._id || video.id;
+
+    const response = await axios.put(
+      `http://localhost:5000/api/videos/${videoId}/dislike`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setLikeCount(response.data.likes);
+    setLiked(response.data.liked);
+    setDisliked(response.data.disliked);
+
+  } catch (error) {
+    console.log("Dislike error:", error);
   }
 }
 

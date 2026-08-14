@@ -53,6 +53,22 @@ const videoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    // Stores users who liked this video
+    likedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    // Stores users who disliked this video
+    dislikedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true,

@@ -183,5 +183,121 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+// LIKE VIDEO
+router.put("/:id/like", authMiddleware, async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id);
+
+    if (!video) {
+      return res.status(404).json({
+        message: "Video not found",
+      });
+    }
+
+    const userId = req.user.userId;
+
+    const alreadyLiked = video.likedBy.some(
+      (id) => id.toString() === userId
+    );
+
+    const alreadyDisliked = video.dislikedBy.some(
+      (id) => id.toString() === userId
+    );
+
+    // If already liked -> remove like
+    if (alreadyLiked) {
+      video.likedBy = video.likedBy.filter(
+        (id) => id.toString() !== userId
+      );
+    } else {
+      // Add like
+      video.likedBy.push(userId);
+
+      // Remove dislike if present
+      if (alreadyDisliked) {
+        video.dislikedBy = video.dislikedBy.filter(
+          (id) => id.toString() !== userId
+        );
+      }
+    }
+
+    video.likes = video.likedBy.length;
+    video.dislikes = video.dislikedBy.length;
+
+    await video.save();
+
+    res.status(200).json({
+      likes: video.likes,
+      dislikes: video.dislikes,
+      liked: !alreadyLiked,
+      disliked: false,
+    });
+  } catch (error) {
+    console.log("LIKE ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+});
+
+
+// DISLIKE VIDEO
+router.put("/:id/dislike", authMiddleware, async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id);
+
+    if (!video) {
+      return res.status(404).json({
+        message: "Video not found",
+      });
+    }
+
+    const userId = req.user.userId;
+
+    const alreadyDisliked = video.dislikedBy.some(
+      (id) => id.toString() === userId
+    );
+
+    const alreadyLiked = video.likedBy.some(
+      (id) => id.toString() === userId
+    );
+
+    // If already disliked -> remove dislike
+    if (alreadyDisliked) {
+      video.dislikedBy = video.dislikedBy.filter(
+        (id) => id.toString() !== userId
+      );
+    } else {
+      // Add dislike
+      video.dislikedBy.push(userId);
+
+      // Remove like if present
+      if (alreadyLiked) {
+        video.likedBy = video.likedBy.filter(
+          (id) => id.toString() !== userId
+        );
+      }
+    }
+
+    video.likes = video.likedBy.length;
+    video.dislikes = video.dislikedBy.length;
+
+    await video.save();
+
+    res.status(200).json({
+      likes: video.likes,
+      dislikes: video.dislikes,
+      liked: false,
+      disliked: !alreadyDisliked,
+    });
+  } catch (error) {
+    console.log("DISLIKE ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+});
 
 export default router;
