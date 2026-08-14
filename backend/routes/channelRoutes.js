@@ -51,6 +51,26 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/my/channel", authMiddleware, async (req, res) => {
+  try {
+    const channel = await Channel.findOne({
+      owner: req.user.userId,
+    });
+
+    if (!channel) {
+      return res.status(404).json({
+        message: "Channel not found",
+      });
+    }
+
+    res.status(200).json(channel);
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+});
+
 // Get channel by handle
 router.get("/:handle", async (req, res) => {
   try {

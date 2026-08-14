@@ -88,52 +88,63 @@ function Channel({ videos, setVideos }) {
     });
   }
 
-  function uploadVideo() {
-    if (
-      newVideo.title.trim() === "" ||
-      newVideo.description.trim() === "" ||
-      newVideo.category === "" ||
-      newVideo.thumbnail.trim() === "" ||
-      newVideo.videoUrl.trim() === ""
-    ) {
-      alert("Please fill all fields");
-      return;
-    }
+  async function uploadVideo() {
+  if (
+    newVideo.title.trim() === "" ||
+    newVideo.description.trim() === "" ||
+    newVideo.category === "" ||
+    newVideo.thumbnail.trim() === "" ||
+    newVideo.videoUrl.trim() === ""
+  ) {
+    alert("Please fill all fields");
+    return;
+  }
 
-    const videoToAdd = {
-      id: Date.now(),
+  try {
+    const token = localStorage.getItem("token");
 
-      title: newVideo.title,
+    const response = await axios.post(
+      "http://localhost:5000/api/videos",
+      {
+        title: newVideo.title,
+        description: newVideo.description,
+        category: newVideo.category,
+        thumbnailUrl: newVideo.thumbnail,
+        videoUrl: newVideo.videoUrl,
+        channelId: channel._id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-      description: newVideo.description,
+    const savedVideo = response.data.video;
 
-      category: newVideo.category,
-
-      thumbnail: newVideo.thumbnail,
-
-      videoUrl: newVideo.videoUrl,
-
-      // FIXED
+    // Convert MongoDB video format
+    // into the format our frontend already uses
+    const frontendVideo = {
+      ...savedVideo,
+      id: savedVideo._id,
+      thumbnail: savedVideo.thumbnailUrl,
       channel: channel.channelName,
-
-      // FIXED
       channelImage: channel.profileImage || "",
-
-      views: "0",
-
       uploadedAt: "Just now",
     };
 
+    // New upload appears first
     setChannelVideos([
-      videoToAdd,
+      frontendVideo,
       ...channelVideos,
     ]);
 
     setVideos([
-      videoToAdd,
+      frontendVideo,
       ...videos,
     ]);
 
+    // Clear form
     setNewVideo({
       title: "",
       description: "",
@@ -143,7 +154,16 @@ function Channel({ videos, setVideos }) {
     });
 
     setShowUploadForm(false);
+
+  } catch (error) {
+    console.log(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Video upload failed"
+    );
   }
+}
 
   function startEditVideo(video) {
     const videoId = video.id || video._id;

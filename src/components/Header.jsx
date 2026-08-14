@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Header({
   toggleSidebar,
@@ -7,6 +8,7 @@ function Header({
   setSearchInput,
   handleSearch,
 }) {
+  const [userChannel, setUserChannel] = useState(null);
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const storedUser = localStorage.getItem("user");
@@ -20,6 +22,31 @@ function Header({
   const [darkMode, setDarkMode] = useState(
     document.body.classList.contains("dark-mode")
   );
+
+  useEffect(() => {
+  async function getMyChannel() {
+    if (!user) return;
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(
+        "http://localhost:5000/api/channels/my/channel",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setUserChannel(response.data);
+    } catch (error) {
+      setUserChannel(null);
+    }
+  }
+
+  getMyChannel();
+}, []);
 
   function toggleDarkMode() {
     const newMode = !darkMode;
@@ -250,19 +277,27 @@ function Header({
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            navigate("/create-channel");
-            setShowUserMenu(false);
-          }}
-          className={`w-full text-left px-4 py-3 text-sm ${
-            darkMode
-              ? "hover:bg-[#3f3f3f]"
-              : "hover:bg-gray-100"
-          }`}
-        >
-          Create Channel
-        </button>
+    {userChannel ? (
+  <button
+    onClick={() => {
+      navigate(`/channel/${userChannel.handle}`);
+      setShowUserMenu(false);
+    }}
+    className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm"
+  >
+    Your Channel
+  </button>
+) : (
+  <button
+    onClick={() => {
+      navigate("/create-channel");
+      setShowUserMenu(false);
+    }}
+    className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm"
+  >
+    Create Channel
+  </button>
+)}
 
         <button
           onClick={() => {

@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 
@@ -21,6 +22,8 @@ function VideoPlayer({videos}) {
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
   const navigate = useNavigate();
+  const [backendVideo, setBackendVideo] = useState(null);
+  const [loadingVideo, setLoadingVideo] = useState(true);
   const currentUser = "Shravan";
 
 const [comments, setComments] = useState([
@@ -36,9 +39,36 @@ const [comments, setComments] = useState([
   },
 ]);
 
-  const video = videos.find(
-    (video) => video.id === Number(id)
-  );
+  const localVideo = videos.find(
+  (video) =>
+    String(video.id || video._id) === String(id)
+);
+
+const video = localVideo || backendVideo;
+
+useEffect(() => {
+  async function fetchVideo() {
+    if (localVideo) {
+      setLoadingVideo(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/videos/${id}`
+      );
+
+      setBackendVideo(response.data);
+    } catch (error) {
+      console.log("Video fetch error:", error);
+      setBackendVideo(null);
+    } finally {
+      setLoadingVideo(false);
+    }
+  }
+
+  fetchVideo();
+}, [id, localVideo]);
 
   function handleProgressClick(e) {
   const progressBar = e.currentTarget;
@@ -144,6 +174,16 @@ function formatTime(time) {
       setIsPlaying(false);
     }
   }
+
+  if (loadingVideo) {
+  return (
+    <div className="p-10">
+      <h1 className="text-xl">
+        Loading video...
+      </h1>
+    </div>
+  );
+}
 
   if (!video) {
     return (
