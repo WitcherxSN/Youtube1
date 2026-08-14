@@ -10,7 +10,18 @@ function Channel({ videos, setVideos }) {
   const [channelVideos, setChannelVideos] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [isOwner] = useState(true);
+  const storedUser = localStorage.getItem("user");
+
+const currentUser = storedUser
+  ? JSON.parse(storedUser)
+  : null;
+
+const isOwner =
+  currentUser &&
+  channel &&
+  channel.handle === "codewithshravan" &&
+  String(channel.owner?._id || channel.owner) ===
+    String(currentUser.id || currentUser._id);
   const [subscribed, setSubscribed] = useState(false);
 
   const [showVideoMenu, setShowVideoMenu] = useState(false);
@@ -37,7 +48,8 @@ function Channel({ videos, setVideos }) {
     videoUrl: "",
   });
 
-  // Fetch channel from backend
+
+  // FETCH CHANNEL
   useEffect(() => {
     async function getChannel() {
       try {
@@ -51,17 +63,21 @@ function Channel({ videos, setVideos }) {
 
         setChannel(fetchedChannel);
 
-        // Supports both old frontend video format
-        // and MongoDB populated channel format
         const matchedVideos = videos.filter((video) => {
           if (typeof video.channel === "string") {
-            return video.channel === fetchedChannel.channelName;
+            return (
+              video.channel === fetchedChannel.channelName
+            );
           }
 
-          if (video.channel && typeof video.channel === "object") {
+          if (
+            video.channel &&
+            typeof video.channel === "object"
+          ) {
             return (
               video.channel._id === fetchedChannel._id ||
-              video.channel.channelName === fetchedChannel.channelName
+              video.channel.channelName ===
+                fetchedChannel.channelName
             );
           }
 
@@ -69,18 +85,26 @@ function Channel({ videos, setVideos }) {
         });
 
         setChannelVideos(matchedVideos);
+
       } catch (error) {
-        console.log("Channel fetch error:", error);
+        console.log(
+          "Channel fetch error:",
+          error
+        );
 
         setChannel(null);
+
       } finally {
         setLoading(false);
       }
     }
 
     getChannel();
+
   }, [handle, videos]);
 
+
+  // HANDLE UPLOAD INPUT
   function handleVideoChange(e) {
     setNewVideo({
       ...newVideo,
@@ -88,100 +112,139 @@ function Channel({ videos, setVideos }) {
     });
   }
 
+
+  // UPLOAD VIDEO
   async function uploadVideo() {
-  if (
-    newVideo.title.trim() === "" ||
-    newVideo.description.trim() === "" ||
-    newVideo.category === "" ||
-    newVideo.thumbnail.trim() === "" ||
-    newVideo.videoUrl.trim() === ""
-  ) {
-    alert("Please fill all fields");
-    return;
-  }
+    if (
+      newVideo.title.trim() === "" ||
+      newVideo.description.trim() === "" ||
+      newVideo.category === "" ||
+      newVideo.thumbnail.trim() === "" ||
+      newVideo.videoUrl.trim() === ""
+    ) {
+      alert("Please fill all fields");
+      return;
+    }
 
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token =
+        localStorage.getItem("token");
 
-    const response = await axios.post(
-      "http://localhost:5000/api/videos",
-      {
-        title: newVideo.title,
-        description: newVideo.description,
-        category: newVideo.category,
-        thumbnailUrl: newVideo.thumbnail,
-        videoUrl: newVideo.videoUrl,
-        channelId: channel._id,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.post(
+        "http://localhost:5000/api/videos",
+        {
+          title: newVideo.title,
+
+          description:
+            newVideo.description,
+
+          category:
+            newVideo.category,
+
+          thumbnailUrl:
+            newVideo.thumbnail,
+
+          videoUrl:
+            newVideo.videoUrl,
+
+          channelId:
+            channel._id,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`,
+          },
+        }
+      );
 
-    const savedVideo = response.data.video;
+      const savedVideo =
+        response.data.video;
 
-    // Convert MongoDB video format
-    // into the format our frontend already uses
-    const frontendVideo = {
-      ...savedVideo,
-      id: savedVideo._id,
-      thumbnail: savedVideo.thumbnailUrl,
-      channel: channel.channelName,
-      channelImage: channel.profileImage || "",
-      uploadedAt: "Just now",
-    };
+      const frontendVideo = {
+        ...savedVideo,
 
-    // New upload appears first
-    setChannelVideos([
-      frontendVideo,
-      ...channelVideos,
-    ]);
+        id: savedVideo._id,
 
-    setVideos([
-      frontendVideo,
-      ...videos,
-    ]);
+        thumbnail:
+          savedVideo.thumbnailUrl,
 
-    // Clear form
-    setNewVideo({
-      title: "",
-      description: "",
-      category: "",
-      thumbnail: "",
-      videoUrl: "",
-    });
+        channel:
+          channel.channelName,
 
-    setShowUploadForm(false);
+        channelHandle:
+          channel.handle,
 
-  } catch (error) {
-    console.log(error);
+        channelImage:
+          channel.profileImage || "",
 
-    alert(
-      error.response?.data?.message ||
-      "Video upload failed"
-    );
+        uploadedAt:
+          "Just now",
+      };
+
+      setChannelVideos([
+        frontendVideo,
+        ...channelVideos,
+      ]);
+
+      setVideos([
+        frontendVideo,
+        ...videos,
+      ]);
+
+      setNewVideo({
+        title: "",
+        description: "",
+        category: "",
+        thumbnail: "",
+        videoUrl: "",
+      });
+
+      setShowUploadForm(false);
+
+    } catch (error) {
+      console.log(
+        "UPLOAD VIDEO ERROR:",
+        error
+      );
+
+      alert(
+        error.response?.data?.message ||
+        "Video upload failed"
+      );
+    }
   }
-}
 
+
+  // START EDIT
   function startEditVideo(video) {
-    const videoId = video.id || video._id;
+    const videoId =
+      video.id || video._id;
 
     setEditingVideoId(videoId);
 
     setEditVideoData({
-      title: video.title || "",
-      description: video.description || "",
-      category: video.category || "",
+      title:
+        video.title || "",
+
+      description:
+        video.description || "",
+
+      category:
+        video.category || "",
+
       thumbnail:
         video.thumbnail ||
         video.thumbnailUrl ||
         "",
-      videoUrl: video.videoUrl || "",
+
+      videoUrl:
+        video.videoUrl || "",
     });
   }
 
+
+  // EDIT INPUT CHANGE
   function handleEditVideoChange(e) {
     setEditVideoData({
       ...editVideoData,
@@ -189,84 +252,157 @@ function Channel({ videos, setVideos }) {
     });
   }
 
-  function saveEditedVideo(id) {
-    const updatedChannelVideos =
-      channelVideos.map((video) => {
-        const videoId =
-          video.id || video._id;
 
-        if (videoId === id) {
-          return {
-            ...video,
+  // SAVE EDITED VIDEO TO MONGODB
+  async function saveEditedVideo(id) {
+    try {
+      const token =
+        localStorage.getItem("token");
 
-            title: editVideoData.title,
+      const response = await axios.put(
+        `http://localhost:5000/api/videos/${id}`,
+        {
+          title:
+            editVideoData.title,
 
-            description:
-              editVideoData.description,
+          description:
+            editVideoData.description,
 
-            category:
-              editVideoData.category,
+          category:
+            editVideoData.category,
 
-            thumbnail:
-              editVideoData.thumbnail,
+          thumbnailUrl:
+            editVideoData.thumbnail,
 
-            thumbnailUrl:
-              editVideoData.thumbnail,
-
-            videoUrl:
-              editVideoData.videoUrl,
-          };
+          videoUrl:
+            editVideoData.videoUrl,
+        },
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`,
+          },
         }
+      );
 
-        return video;
+      const updatedVideo =
+        response.data.video;
+
+      setChannelVideos(
+        channelVideos.map((video) => {
+          const videoId =
+            video._id || video.id;
+
+          if (videoId === id) {
+            return {
+              ...video,
+              ...updatedVideo,
+
+              id:
+                updatedVideo._id,
+
+              thumbnail:
+                updatedVideo.thumbnailUrl,
+            };
+          }
+
+          return video;
+        })
+      );
+
+      setVideos(
+        videos.map((video) => {
+          const videoId =
+            video._id || video.id;
+
+          if (videoId === id) {
+            return {
+              ...video,
+              ...updatedVideo,
+
+              id:
+                updatedVideo._id,
+
+              thumbnail:
+                updatedVideo.thumbnailUrl,
+            };
+          }
+
+          return video;
+        })
+      );
+
+      setEditingVideoId(null);
+
+      setEditVideoData({
+        title: "",
+        description: "",
+        category: "",
+        thumbnail: "",
+        videoUrl: "",
       });
 
-    const updatedVideos =
-      videos.map((video) => {
-        const videoId =
-          video.id || video._id;
+    } catch (error) {
+      console.log(
+        "EDIT VIDEO ERROR:",
+        error
+      );
 
-        if (videoId === id) {
-          return {
-            ...video,
-
-            title: editVideoData.title,
-
-            description:
-              editVideoData.description,
-
-            category:
-              editVideoData.category,
-
-            thumbnail:
-              editVideoData.thumbnail,
-
-            thumbnailUrl:
-              editVideoData.thumbnail,
-
-            videoUrl:
-              editVideoData.videoUrl,
-          };
-        }
-
-        return video;
-      });
-
-    setChannelVideos(updatedChannelVideos);
-
-    setVideos(updatedVideos);
-
-    setEditingVideoId(null);
-
-    setEditVideoData({
-      title: "",
-      description: "",
-      category: "",
-      thumbnail: "",
-      videoUrl: "",
-    });
+      alert(
+        error.response?.data?.message ||
+        "Could not update video"
+      );
+    }
   }
 
+
+  // DELETE VIDEO FROM MONGODB
+  async function deleteVideo(id) {
+    try {
+      const token =
+        localStorage.getItem("token");
+
+      await axios.delete(
+        `http://localhost:5000/api/videos/${id}`,
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`,
+          },
+        }
+      );
+
+      setChannelVideos(
+        channelVideos.filter(
+          (video) =>
+            (video._id || video.id) !== id
+        )
+      );
+
+      setVideos(
+        videos.filter(
+          (video) =>
+            (video._id || video.id) !== id
+        )
+      );
+
+      setDeleteMode(false);
+
+    } catch (error) {
+      console.log(
+        "DELETE VIDEO ERROR:",
+        error
+      );
+
+      alert(
+        error.response?.data?.message ||
+        "Could not delete video"
+      );
+    }
+  }
+
+
+  // LOADING
   if (loading) {
     return (
       <div className="p-10">
@@ -277,6 +413,8 @@ function Channel({ videos, setVideos }) {
     );
   }
 
+
+  // CHANNEL NOT FOUND
   if (!channel) {
     return (
       <div className="p-10">
@@ -286,11 +424,17 @@ function Channel({ videos, setVideos }) {
       </div>
     );
   }
+console.log("CURRENT USER:", currentUser);
+console.log("CHANNEL:", channel);
+console.log("CHANNEL OWNER:", channel?.owner);
+console.log("IS OWNER:", isOwner);
+
+
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-6">
 
-      {/* Banner */}
+      {/* BANNER */}
       {channel.bannerImage ? (
         <img
           src={channel.bannerImage}
@@ -302,10 +446,10 @@ function Channel({ videos, setVideos }) {
       )}
 
 
-      {/* Channel Info */}
+      {/* CHANNEL INFO */}
       <div className="flex items-center gap-5 mt-6">
 
-        {/* Channel Image */}
+        {/* PROFILE IMAGE */}
         {channel.profileImage ? (
           <img
             src={channel.profileImage}
@@ -321,7 +465,6 @@ function Channel({ videos, setVideos }) {
         )}
 
 
-        {/* Channel Details */}
         <div>
 
           <h1 className="text-3xl font-bold">
@@ -341,7 +484,7 @@ function Channel({ videos, setVideos }) {
           </p>
 
 
-          {/* Subscribe */}
+          {/* SUBSCRIBE */}
           <div className="flex items-center gap-2 mt-4">
 
             <button
@@ -366,7 +509,7 @@ function Channel({ videos, setVideos }) {
       </div>
 
 
-      {/* Tabs */}
+      {/* TABS */}
       <div className="flex gap-8 mt-8 border-b">
 
         <button className="font-semibold border-b-2 border-black pb-3">
@@ -384,7 +527,7 @@ function Channel({ videos, setVideos }) {
       </div>
 
 
-      {/* Videos Heading */}
+      {/* VIDEOS HEADING */}
       <div className="relative flex items-center justify-between mt-3 mb-5">
 
         <h2 className="text-xl font-bold">
@@ -392,7 +535,7 @@ function Channel({ videos, setVideos }) {
         </h2>
 
 
-        {/* Owner Menu */}
+        {/* OWNER MENU */}
         {isOwner && (
           <div className="relative">
 
@@ -415,7 +558,7 @@ function Channel({ videos, setVideos }) {
             {showVideoMenu && (
               <div className="absolute right-0 top-11 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-20 overflow-hidden">
 
-                {/* Upload */}
+                {/* UPLOAD */}
                 <button
                   onClick={() => {
                     setShowUploadForm(true);
@@ -432,7 +575,7 @@ function Channel({ videos, setVideos }) {
                 </button>
 
 
-                {/* Edit */}
+                {/* EDIT */}
                 <button
                   onClick={() => {
                     setEditMode(true);
@@ -447,7 +590,7 @@ function Channel({ videos, setVideos }) {
                 </button>
 
 
-                {/* Delete */}
+                {/* DELETE */}
                 <button
                   onClick={() => {
                     setDeleteMode(true);
@@ -470,7 +613,7 @@ function Channel({ videos, setVideos }) {
       </div>
 
 
-      {/* Upload Form */}
+      {/* UPLOAD FORM */}
       {showUploadForm && (
         <div className="mb-6 border border-gray-200 rounded-xl p-5 bg-white">
 
@@ -601,7 +744,7 @@ function Channel({ videos, setVideos }) {
       )}
 
 
-      {/* Delete Mode Message */}
+      {/* DELETE MODE */}
       {deleteMode && (
         <div className="flex items-center justify-between mb-4">
 
@@ -622,7 +765,7 @@ function Channel({ videos, setVideos }) {
       )}
 
 
-      {/* Edit Mode Message */}
+      {/* EDIT MODE */}
       {editMode && (
         <div className="flex items-center justify-between mb-4">
 
@@ -643,10 +786,11 @@ function Channel({ videos, setVideos }) {
       )}
 
 
-      {/* Video Grid */}
+      {/* VIDEO GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
         {channelVideos.map((video) => {
+
           const videoId =
             video.id || video._id;
 
@@ -655,6 +799,7 @@ function Channel({ videos, setVideos }) {
               key={videoId}
               className="relative cursor-pointer"
               onClick={() => {
+
                 if (
                   !deleteMode &&
                   !editMode &&
@@ -664,40 +809,18 @@ function Channel({ videos, setVideos }) {
                     `/video/${videoId}`
                   );
                 }
+
               }}
             >
 
-              {/* Delete Button */}
+
+              {/* DELETE BUTTON */}
               {deleteMode && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
 
-                    const updatedChannelVideos =
-                      channelVideos.filter(
-                        (item) =>
-                          (item.id ||
-                            item._id) !==
-                          videoId
-                      );
-
-                    const updatedVideos =
-                      videos.filter(
-                        (item) =>
-                          (item.id ||
-                            item._id) !==
-                          videoId
-                      );
-
-                    setChannelVideos(
-                      updatedChannelVideos
-                    );
-
-                    setVideos(
-                      updatedVideos
-                    );
-
-                    setDeleteMode(false);
+                    deleteVideo(videoId);
                   }}
                   className="absolute top-2 right-2 z-10 bg-red-600 text-white px-3 py-1 rounded-full text-sm"
                 >
@@ -706,7 +829,7 @@ function Channel({ videos, setVideos }) {
               )}
 
 
-              {/* Edit Button */}
+              {/* EDIT BUTTON */}
               {editMode && (
                 <button
                   onClick={(e) => {
@@ -723,7 +846,7 @@ function Channel({ videos, setVideos }) {
               )}
 
 
-              {/* Thumbnail */}
+              {/* THUMBNAIL */}
               <img
                 src={
                   video.thumbnail ||
@@ -741,15 +864,16 @@ function Channel({ videos, setVideos }) {
 
               <p className="text-sm text-gray-600 mt-1">
                 {video.views || 0} views
+
                 {video.uploadedAt
                   ? ` • ${video.uploadedAt}`
                   : ""}
               </p>
 
 
-              {/* Edit Form */}
-              {editingVideoId ===
-                videoId && (
+              {/* EDIT FORM */}
+              {editingVideoId === videoId && (
+
                 <div
                   onClick={(e) =>
                     e.stopPropagation()
@@ -794,6 +918,7 @@ function Channel({ videos, setVideos }) {
                     }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                   >
+
                     <option value="React">
                       React
                     </option>
@@ -821,6 +946,7 @@ function Channel({ videos, setVideos }) {
                     <option value="Movies">
                       Movies
                     </option>
+
                   </select>
 
 
@@ -855,11 +981,17 @@ function Channel({ videos, setVideos }) {
                   <div className="flex gap-2 justify-end">
 
                     <button
-                      onClick={() =>
-                        setEditingVideoId(
-                          null
-                        )
-                      }
+                      onClick={() => {
+                        setEditingVideoId(null);
+
+                        setEditVideoData({
+                          title: "",
+                          description: "",
+                          category: "",
+                          thumbnail: "",
+                          videoUrl: "",
+                        });
+                      }}
                       className="px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200"
                     >
                       Cancel
@@ -880,6 +1012,7 @@ function Channel({ videos, setVideos }) {
                   </div>
 
                 </div>
+
               )}
 
             </div>

@@ -39,7 +39,52 @@ const currentUser = storedUser
     String(video.id || video._id) === String(id)
 );
 
-const video = localVideo || backendVideo;
+const rawVideo = localVideo || backendVideo;
+
+
+const video = rawVideo
+  ? {
+      ...rawVideo,
+      id: rawVideo.id || rawVideo._id,
+
+      thumbnail:
+        rawVideo.thumbnail ||
+        rawVideo.thumbnailUrl ||
+        "",
+
+      channel:
+        typeof rawVideo.channel === "object"
+          ? rawVideo.channel?.channelName || "Unknown Channel"
+          : rawVideo.channel || "Unknown Channel",
+
+      channelHandle:
+        rawVideo.channelHandle ||
+        (typeof rawVideo.channel === "object"
+          ? rawVideo.channel?.handle
+          : ""),
+
+      channelImage:
+        rawVideo.channelImage ||
+        (typeof rawVideo.channel === "object"
+          ? rawVideo.channel?.profileImage || ""
+          : ""),
+
+      uploadedAt:
+        rawVideo.uploadedAt ||
+        (rawVideo.createdAt
+          ? new Date(rawVideo.createdAt).toLocaleDateString()
+          : ""),
+
+      likes:
+        rawVideo.likes || 0,
+
+      likedBy:
+        rawVideo.likedBy || [],
+
+      dislikedBy:
+        rawVideo.dislikedBy || [],
+    }
+  : null;
 
 
 
@@ -55,7 +100,7 @@ useEffect(() => {
         `http://localhost:5000/api/videos/${id}`
       );
 
-      setBackendVideo(response.data);
+      setBackendVideo(response.data.video || response.data);
     } catch (error) {
       console.log("Video fetch error:", error);
       setBackendVideo(null);
@@ -90,6 +135,33 @@ useEffect(() => {
 
   fetchComments();
 }, [video]);
+
+useEffect(() => {
+  if (!video) return;
+
+  setLikeCount(video.likes || 0);
+
+  const userId = currentUser?.id || currentUser?._id;
+
+  if (!userId) {
+    setLiked(false);
+    setDisliked(false);
+    return;
+  }
+
+  const hasLiked = (video.likedBy || []).some((item) => {
+    const id = item?._id || item;
+    return String(id) === String(userId);
+  });
+
+  const hasDisliked = (video.dislikedBy || []).some((item) => {
+    const id = item?._id || item;
+    return String(id) === String(userId);
+  });
+
+  setLiked(hasLiked);
+  setDisliked(hasDisliked);
+}, [video?._id, currentUser?.id, currentUser?._id]);
 
   function handleProgressClick(e) {
   const progressBar = e.currentTarget;
@@ -451,8 +523,7 @@ async function deleteComment(id) {
 
                 <button
   onClick={toggleMute}
-  className="w-8 h-8 flex items-center justify-center"
->
+  className="w-8 h-8 flex items-center justify-center">
   <img
     src={
       isMuted
@@ -516,13 +587,13 @@ async function deleteComment(id) {
                 src={video.channelImage}
                 alt={video.channel}
                 onClick={() =>
-                    navigate(`/channel/${encodeURIComponent(video.channel)}`)}
+                    video.channelHandle && navigate(`/channel/${video.channelHandle}`)}
                 className="w-10 h-10 rounded-full object-cover cursor-pointer"
               />
             )}
 
             <div>
-              <p onClick={() => navigate(`/channel/${encodeURIComponent(video.channel)}`)}
+              <p onClick={() => video.channelHandle && navigate(`/channel/${video.channelHandle}`)}
               className="font-semibold cursor-pointer hover:text-gray-700">
                 {video.channel}
               </p>
@@ -850,20 +921,24 @@ async function deleteComment(id) {
         <div className="space-y-4">
 
           {videos
-            .filter((item) => item.id !== video.id)
+            .filter(
+              (item) =>
+                String(item.id || item._id) !==
+                String(video.id || video._id)
+            )
             .slice(0, 6)
             .map((item) => (
 
               <div
-                key={item.id}
+                key={item.id || item._id}
                 onClick={() =>
-                  window.location.href = `/video/${item.id}`
+                  navigate(`/video/${item.id || item._id}`)
                 }
                 className="flex gap-3 cursor-pointer"
               >
 
                 <img
-                  src={item.thumbnail}
+                  src={item.thumbnail || item.thumbnailUrl}
                   alt={item.title}
                   className="w-80 aspect-video object-cover rounded-xl"
                 />
