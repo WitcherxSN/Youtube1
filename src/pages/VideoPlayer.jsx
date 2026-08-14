@@ -19,6 +19,7 @@ function VideoPlayer() {
   const [likeCount, setLikeCount] = useState(1200);
   const [subscribed, setSubscribed] = useState(false);
   const [commentText, setCommentText] = useState("");
+  
 
 const [comments, setComments] = useState([
   {
@@ -149,6 +150,21 @@ function formatTime(time) {
       </h1>
     );
   }
+
+  function addComment() {
+  if (commentText.trim() === "") {
+    return;
+  }
+
+  const newComment = {
+    id: Date.now(),
+    user: "Shravan",
+    text: commentText,
+  };
+
+  setComments([...comments, newComment]);
+  setCommentText("");
+}
 
   return (
   <div className="p-6">
@@ -419,9 +435,10 @@ function formatTime(time) {
                   Cancel
                 </button>
 
-                <button className="px-4 py-2 rounded-full bg-blue-600 text-white font-medium">
-                  Comment
-                </button>
+                <button
+                  onClick={addComment}
+                      className="px-4 py-2 rounded-full bg-blue-600 text-white font-medium">
+                           Comment</button>
 
               </div>
 
@@ -553,7 +570,7 @@ function formatTime(time) {
                     {item.title}
                   </h3>
 
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs  text-gray-600 mt-1">
                     {item.channel}
                   </p>
 
