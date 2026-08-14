@@ -242,9 +242,11 @@ function deleteComment(id) {
   className="w-8 h-8 flex items-center justify-center"
 >
   {isPlaying ? (
-    <span className="text-white text-2xl font-bold">
-      ❚❚
-    </span>
+    <img
+      src="https://cdn-icons-png.flaticon.com/128/3240/3240602.png"
+      alt="Pause"
+      className="w-6 h-6 object-contain invert"
+    />
   ) : (
     <img
       src="https://cdn-icons-png.flaticon.com/128/3874/3874990.png"
@@ -290,7 +292,11 @@ function deleteComment(id) {
                 onClick={handleFullscreen}
                 className="text-white text-2xl"
               >
-                ⛶
+               <img
+      src="https://cdn-icons-png.flaticon.com/128/12661/12661254.png"
+      alt="Extend"
+      className="w-6 h-6 object-contain invert"
+    />
               </button>
 
             </div>
