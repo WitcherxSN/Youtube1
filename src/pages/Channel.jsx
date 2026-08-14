@@ -10,7 +10,19 @@ function Channel({videos, setVideos}) {
   const { channelName } = useParams();
   const [subscribed, setSubscribed] = useState(false);
   const navigate = useNavigate();
+  const [deleteMode, setDeleteMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [newVideo, setNewVideo] = useState({
+  title: "",
+  description: "",
+  category: "",
+  thumbnail: "",
+  videoUrl: "",
+});
+
+const [editingVideoId, setEditingVideoId] = useState(null);
+
+const [editVideoData, setEditVideoData] = useState({
   title: "",
   description: "",
   category: "",
@@ -24,7 +36,9 @@ function Channel({videos, setVideos}) {
 
 const [channelVideos, setChannelVideos] = useState(initialChannelVideos);
 
-  const channel = channelVideos[0];
+  const channel = videos.find(
+  (video) => video.channel === channelName
+);
 
   if (!channel) {
     return (
@@ -80,6 +94,58 @@ function uploadVideo() {
   });
 
   setShowUploadForm(false);
+}
+
+function startEditVideo(video) {
+  setEditingVideoId(video.id);
+
+  setEditVideoData({
+    title: video.title,
+    description: video.description,
+    category: video.category,
+    thumbnail: video.thumbnail,
+    videoUrl: video.videoUrl,
+  });
+}
+
+function handleEditVideoChange(e) {
+  setEditVideoData({
+    ...editVideoData,
+    [e.target.name]: e.target.value,
+  });
+}
+
+function saveEditedVideo(id) {
+  const updatedChannelVideos = channelVideos.map((video) =>
+    video.id === id
+      ? {
+          ...video,
+          ...editVideoData,
+        }
+      : video
+  );
+
+  const updatedVideos = videos.map((video) =>
+    video.id === id
+      ? {
+          ...video,
+          ...editVideoData,
+        }
+      : video
+  );
+
+  setChannelVideos(updatedChannelVideos);
+  setVideos(updatedVideos);
+
+  setEditingVideoId(null);
+
+  setEditVideoData({
+    title: "",
+    description: "",
+    category: "",
+    thumbnail: "",
+    videoUrl: "",
+  });
 }
 
   return (
@@ -194,8 +260,20 @@ function uploadVideo() {
             Upload Video
           </button>
 
+                            <button
+                    onClick={() => {
+                      setEditMode(true);
+                      setDeleteMode(false);
+                      setShowVideoMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm"
+                  >
+                    Edit Video
+                  </button>
+
           <button
-            onClick={() => setShowVideoMenu(false)}
+            onClick={() =>  {setDeleteMode(true);
+                setShowVideoMenu(false);}}
             className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm text-red-600"
           >
             Delete Video
@@ -303,33 +381,171 @@ function uploadVideo() {
   </div>
 )}
 
+{deleteMode && (
+  <div className="flex items-center justify-between mb-4">
+
+    <p className="text-sm text-red-600 font-medium">
+      Select a video to delete
+    </p>
+
+    <button
+      onClick={() => setDeleteMode(false)}
+      className="px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-sm"
+    >
+      Cancel
+    </button>
+
+  </div>
+)}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
         {channelVideos.map((video) => (
 
-          <div
-            key={video.id}
-            onClick={() => navigate(`/video/${video.id}`)}
-            className="cursor-pointer"
+  <div
+    key={video.id}
+    className="relative cursor-pointer"
+    onClick={() => {
+      if (!deleteMode && !editMode) {
+        navigate(`/video/${video.id}`);
+      }
+    }}
+  >
+
+    {/* Delete Mode */}
+    {deleteMode && (
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+
+          const updatedChannelVideos = channelVideos.filter(
+            (item) => item.id !== video.id
+          );
+
+          const updatedVideos = videos.filter(
+            (item) => item.id !== video.id
+          );
+
+          setChannelVideos(updatedChannelVideos);
+          setVideos(updatedVideos);
+
+          setDeleteMode(false);
+        }}
+        className="absolute top-2 right-2 z-10 bg-red-600 text-white px-3 py-1 rounded-full text-sm"
+      >
+        Delete
+      </button>
+    )}
+
+    {/* Edit Mode */}
+    {editMode && (
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+
+          startEditVideo(video);
+          setEditMode(false);
+        }}
+        className="absolute top-2 right-2 z-10 bg-gray-400 text-white px-3 py-1 rounded-full text-sm"
+      >
+        Edit
+      </button>
+    )}
+
+    <img
+      src={video.thumbnail}
+      alt={video.title}
+      className="w-full aspect-video object-cover rounded-xl"
+    />
+
+    <h3 className="font-semibold mt-3">
+      {video.title}
+    </h3>
+
+    <p className="text-sm text-gray-600 mt-1">
+      {video.views} views • {video.uploadedAt}
+    </p>
+
+    {editingVideoId === video.id && (
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="mt-4 border border-gray-200 rounded-xl p-4 space-y-3 bg-white"
+      >
+
+        <input
+          type="text"
+          name="title"
+          value={editVideoData.title}
+          onChange={handleEditVideoChange}
+          placeholder="Video title"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none"
+        />
+
+        <textarea
+          name="description"
+          value={editVideoData.description}
+          onChange={handleEditVideoChange}
+          placeholder="Description"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none"
+        />
+
+        <select
+          name="category"
+          value={editVideoData.category}
+          onChange={handleEditVideoChange}
+          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+        >
+          <option value="React">React</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="Gaming">Gaming</option>
+          <option value="Music">Music</option>
+          <option value="News">News</option>
+          <option value="Live">Live</option>
+          <option value="Movies">Movies</option>
+        </select>
+
+        <input
+          type="text"
+          name="thumbnail"
+          value={editVideoData.thumbnail}
+          onChange={handleEditVideoChange}
+          placeholder="Thumbnail URL"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none"
+        />
+
+        <input
+          type="text"
+          name="videoUrl"
+          value={editVideoData.videoUrl}
+          onChange={handleEditVideoChange}
+          placeholder="Video URL"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none"
+        />
+
+        <div className="flex gap-2 justify-end">
+
+          <button
+            onClick={() => setEditingVideoId(null)}
+            className="px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200"
           >
+            Cancel
+          </button>
 
-            <img
-              src={video.thumbnail}
-              alt={video.title}
-              className="w-full aspect-video object-cover rounded-xl"
-            />
+          <button
+            onClick={() => saveEditedVideo(video.id)}
+            className="px-4 py-2 rounded-full bg-blue-600 text-white"
+          >
+            Save
+          </button>
 
-            <h3 className="font-semibold mt-3">
-              {video.title}
-            </h3>
+        </div>
 
-            <p className="text-sm text-gray-600 mt-1">
-              {video.views} views • {video.uploadedAt}
-            </p>
+      </div>
+    )}
 
-          </div>
+  </div>
 
-        ))}
+))}
 
       </div>
 
